@@ -34,7 +34,8 @@ interesting user interface and more advanced ways to search/filter photos.
 1. After receiving criticism on our project pitch, we realized that we will need to either edit our current proposal or completely come up with a new idea. Our original idea has already been done by many companies, and not very well.
 2. Our current leading prospect for an alteration to the project is to build an advanced filtering system that uses an already available auto-tagging AI and fits in a robust user interface that is based on file links for user interaction.
 
-## Confidence on completion of the project for each team member and the group average (Scale of 1-5; 1 not-confident; 3 = toss-up; 5 = confident.)
+## Confidence on completion of the project for each team member and the group average
+Scale of 1-5; 1 = not-confident; 3 = toss-up; 5 = confident.
 - Buck - 3 
 - Connor - 3
 - Cody - 2.5 on current project plan.
