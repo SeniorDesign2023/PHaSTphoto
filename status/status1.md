@@ -53,9 +53,9 @@ interesting user interface and more advanced ways to search/filter photos.
 Scale of 1-5; 1 = not-confident; 3 = toss-up; 5 = confident.
 - Buck - 3 
 - Connor - 3
-- Cody - 2.5 on current project plan.
+- Cody - 4
 - Matty - 3.5 whatever we finally decide on, I am confident in our ability to accomplish it. I think we just need some help at this point on narrowing down the direction that we want to go now that our original plan has been at least partially scrapped.
-- Average: 3
+- Average: 3.375
 
 ## Group Dynamics
 1. Our group is working well so far. We are holding meetings, discussing problems, and working together on the various documents that have been assigned to us. We are all also brainstorming ways to better focus our project idea and plan out the roadmap for it.
