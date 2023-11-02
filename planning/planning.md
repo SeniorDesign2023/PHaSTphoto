@@ -3,8 +3,8 @@
 
 3. Descriptions, Diagrams, User Interactions
    - We will allow users to upload images, then we display them in a grid layout on the right side of the home page.
-   - b. Clicking on an image will enlarge it to fill the page, and there will be a short description/list of tags for the image.
-   - c. There will be a drop-down menu on the left of the home page that allows the user to apply preset filters.
+   - Clicking on an image will enlarge it to fill the page, and there will be a short description/list of tags for the image.
+   - There will be a drop-down menu on the left of the home page that allows the user to apply preset filters.
    - There will be a menu bar at the top of the home page that has upload, filter, and clear options.
       - The upload section redirects to a page with an input box and an “upload” button.
       - The filter section redirects to a page that will allow the user to enter search keywords in a boolean format. These filters will be applied to the images on the home page.
