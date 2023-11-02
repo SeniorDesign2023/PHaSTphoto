@@ -1,8 +1,8 @@
 # Minimum Viable Product
-- Our minimum viable product will be a simple photo gallery desktop application that allows users to upload photos, displays them in a grid layout, and offers basic filtering features.
+a Our minimum viable product will be a simple photo gallery desktop application that allows users to upload photos, displays them in a grid layout, and offers basic filtering features.
 
 # Descriptions, Diagrams, User Interactions
-- We will allow users to upload images, then we display them in a grid layout on the right side of the home page.
+a We will allow users to upload images, then we display them in a grid layout on the right side of the home page.
 - Clicking on an image will enlarge it to fill the page, and there will be a short description/list of tags for the image.
 - There will be a drop-down menu on the left of the home page that allows the user to apply preset filters.
 - There will be a menu bar at the top of the home page that has upload, filter, and clear options.
