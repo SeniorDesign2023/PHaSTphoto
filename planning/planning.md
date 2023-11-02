@@ -1,12 +1,5 @@
-1. First item
-   - a. Sub-item A
-   - b. Sub-item B
-2. Second item
-   - a. Sub-item A
-   - b. Sub-item B
-
 1. Minimum Viable Product
-a. Our minimum viable product will be a simple photo gallery desktop application that allows users to upload photos, displays them in a grid layout, and offers basic filtering features.
+   a. Our minimum viable product will be a simple photo gallery desktop application that allows users to upload photos, displays them in a grid layout, and offers basic filtering features.
 
 3. Descriptions, Diagrams, User Interactions
 - a. We will allow users to upload images, then we display them in a grid layout on the right side of the home page.
