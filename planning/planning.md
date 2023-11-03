@@ -11,7 +11,8 @@
       - The clear option clears all currently applied filters.
    - Any filters that the user applies will be saved until the user changes them.
    - Uploading new photos and clicking next will create a popup that allows the user to either apply the current filter again or to search with a new filter. This new filter will apply across all photos
-
+![Home Page](diagrams/image1.png)
+![Other Pages](diagrams/image2.png)
 3. Tasks
    - Maybe, figure out how to use the GPT-4 API to tag images
       - Might need to pay. That’s okay with us.
