@@ -11,7 +11,7 @@ router.post('/upload', upload.array('photos'), (req, res) => {
   
     // Process files or save metadata to database, then
     res.status(200).json({ message: 'Files uploaded successfully' });
-  });
+  }); 
   
 
 module.exports = router
