@@ -1,11 +1,18 @@
 const express = require('express');
 const multer = require('multer');
-const Archiver = require('archiver');
 const exifParser = require('exif-parser');
 const Photo = require('../models/photo');
+const fs = require('fs'); // Add this line to require the fs module
+const Archiver = require('archiver');
 
-// Set up multer to store files in memory
-const upload = multer({ storage: multer.memoryStorage() });
+const storage = multer.diskStorage({
+    destination: 'temp/',
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+});
+
+const upload = multer({ storage: storage }); 
 const router = express.Router();
 
 // POST endpoint for file uploads
@@ -17,17 +24,18 @@ router.post('/upload', upload.array('photos'), async (req, res) => {
         const imageInfoArray = [];
 
         for (const file of req.files) {
+            const buffer = fs.readFileSync(file.path);
             let metadata = null;
 
             try {
-                const parser = exifParser.create(file.buffer);
+                const parser = exifParser.create(buffer);
                 metadata = parser.parse();
             } catch (error) {
                 console.error('Error parsing EXIF data:', error);
             }
 
             const newPhoto = new Photo({
-                photoData: file.buffer, // Store the photo data from the buffer
+                filePath: '/temp/' + file.originalname,
                 metadata: metadata
             });
 
@@ -47,28 +55,39 @@ router.post('/upload', upload.array('photos'), async (req, res) => {
     }
 });
 
-router.get('/download', async (req, res) => {
-  try {
-      const photos = await Photo.find({});
+router.get('/getTags', async (req, res) => {
+    try {
+        // Retrieve all photos from the database
+        const photos = await Photo.find({});
+        
+        // Extract unique tags from the photos
+        const tags = [];
 
-      res.writeHead(200, {
-          'Content-Type': 'application/zip',
-          'Content-Disposition': 'attachment; filename=photos.zip'
-      });
+        photos.forEach((photo) => {
+            const metadata = photo.metadata;
+            console.log('Metadata:', metadata); // Log the metadata
 
-      const zip = Archiver('zip', { zlib: { level: 9 } });
-      zip.pipe(res);
+            if (metadata && metadata.tags && typeof metadata.tags === 'object') {
+                // Iterate through the keys of the tags object
+                Object.keys(metadata.tags).forEach((tagKey) => {
+                    const tagValue = metadata.tags[tagKey];
+                    if (!tags.includes(tagValue)) {
+                        tags.push(tagValue);
+                    }
+                });
+            }
+        });
 
-      photos.forEach(photo => {
-          // Assuming photoData is a buffer containing your image
-          zip.append(photo.photoData, { name: 'photo_' + photo._id + '.jpg' });
-      });
+        console.log('Extracted Tags:', tags); // Log the extracted tags
 
-      zip.finalize();
-  } catch (err) {
-      console.error('Error creating ZIP:', err);
-      res.status(500).json({ message: 'Error creating ZIP file', error: err });
-  }
+        res.status(200).json({ tags });
+    } catch (err) {
+        console.error('Error fetching unique tags:', err);
+        res.status(500).json({ message: 'Error fetching unique tags', error: err });
+    }
 });
+
+
+
 
 module.exports = router;

@@ -5,40 +5,40 @@ function TagSelection() {
   const [tags, setTags] = useState([]);
   const [selectedTag, setSelectedTag] = useState('');
 
+  const fetchTags = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/getTags'); // Replace with your API endpoint
+      if (response.ok) {
+        const data = await response.json();
+        // Assuming data.tags is an array of strings
+        setTags(data.tags);
+      } else {
+        console.error('Error fetching tags:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTags();
+  }, []);
+
   const handleTagChange = (event) => {
     setSelectedTag(event.target.value);
   };
 
   const handleDownload = () => {
-    fetch('http://localhost:4000/download') // Adjust this URL to match your server's configuration
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.blob();
-        })
-        .then(blob => {
-            // Create a link element, use it to download the ZIP file, and then remove it
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'photos.zip';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
-        })
-        .catch(error => {
-            console.error('Error downloading photos:', error);
-        });
-};
+    // Add logic here to handle the download based on the selectedTag
+    // You can make another API call to the backend to initiate the download
+  };
 
   return (
     <div className="tag-selection-container">
       <h1>Select Tags</h1>
       <div className="radio-buttons-container">
         {tags.map(tag => (
-          <label key={tag}>
+          <label key={tag} className="radio-label">
             <input 
               type="radio" 
               value={tag} 
