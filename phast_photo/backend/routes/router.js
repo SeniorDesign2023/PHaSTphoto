@@ -60,32 +60,32 @@ router.get('/getTags', async (req, res) => {
         // Retrieve all photos from the database
         const photos = await Photo.find({});
         
-        // Extract unique tags from the photos
+        // Extract tags from the photos
         const tags = [];
 
         photos.forEach((photo) => {
             const metadata = photo.metadata;
-            console.log('Metadata:', metadata); // Log the metadata
-
-            if (metadata && metadata.tags && typeof metadata.tags === 'object') {
-                // Iterate through the keys of the tags object
-                Object.keys(metadata.tags).forEach((tagKey) => {
-                    const tagValue = metadata.tags[tagKey];
-                    if (!tags.includes(tagValue)) {
-                        tags.push(tagValue);
+            if (metadata.tags) {
+                // Iterate through the keys (tags) in metadata.tags
+                for (const tag in metadata.tags) {
+                    const pair = [tag, metadata.tags[tag]];
+                    // Check if the pair already exists in the tags array
+                    if (!tags.some(([key, value]) => key.toString() == tag.toString() && value.toString() == metadata.tags[tag].toString())) {
+                        tags.push(pair);
+                        console.log(pair)
                     }
-                });
+                }
             }
         });
-
-        console.log('Extracted Tags:', tags); // Log the extracted tags
-
         res.status(200).json({ tags });
     } catch (err) {
-        console.error('Error fetching unique tags:', err);
-        res.status(500).json({ message: 'Error fetching unique tags', error: err });
+        console.error('Error fetching tags:', err);
+        res.status(500).json({ message: 'Error fetching tags', error: err });
     }
 });
+
+
+
 
 
 
