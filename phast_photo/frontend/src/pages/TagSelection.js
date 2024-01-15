@@ -21,10 +21,6 @@ function TagSelection() {
   };
 
   useEffect(() => {
-    console.log(tags);
-  }, [tags]);
-
-  useEffect(() => {
     fetchTags();
   }, []);
 
@@ -41,10 +37,39 @@ function TagSelection() {
     });
   };
 
-  const handleDownload = () => {
-    // Add logic here to handle the download based on the selectedTags
-    // You can make another API call to the backend to initiate the download
-  };
+  const handleDownload = async () => {
+    if (selectedTags.length === 0) {
+      alert("Please select at least one tag before downloading.");
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:4000/downloadPhotos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ selectedTags }),
+      });
+
+      if (response.ok) {
+        response.blob().then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = "selected_photos.zip";
+          document.body.appendChild(a); // Append the element to the DOM
+          a.click();
+          a.remove(); // Remove the element after clicking
+          window.URL.revokeObjectURL(url); // Clean up the URL object
+        });
+      } else {
+        console.error('Error initiating download:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error initiating download:', error);
+    }
+};
 
   return (
     <div className="tag-selection-container">

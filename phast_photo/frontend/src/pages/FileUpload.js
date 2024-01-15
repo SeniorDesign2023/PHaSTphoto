@@ -14,7 +14,7 @@ function FileUpload({ onNext }) {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     multiple: true,
-    accept: 'image/jpeg'
+    accept: {'image/*': ['.jpeg', '.jpg']}
   });
 
   const filesList = files.map(file => (
