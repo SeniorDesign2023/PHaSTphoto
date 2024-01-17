@@ -3,14 +3,13 @@ import './TagSelection.css';
 
 function TagSelection() {
   const [tags, setTags] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]); // Use an array to store selected tags
+  const [selectedTags, setSelectedTags] = useState([]);
 
   const fetchTags = async () => {
     try {
-      const response = await fetch('http://localhost:4000/getTags'); // Replace with your API endpoint
+      const response = await fetch('http://localhost:4000/getTags');
       if (response.ok) {
         const data = await response.json();
-        // Assuming data.tags is an object
         setTags(data.tags);
       } else {
         console.error('Error fetching tags:', response.statusText);
@@ -27,7 +26,6 @@ function TagSelection() {
   const handleTagChange = (event) => {
     const tag = event.target.value;
 
-    // Toggle the selected tag in the array
     setSelectedTags((prevSelectedTags) => {
       if (prevSelectedTags.includes(tag)) {
         return prevSelectedTags.filter((selectedTag) => selectedTag !== tag);
@@ -58,10 +56,10 @@ function TagSelection() {
           const a = document.createElement('a');
           a.href = url;
           a.download = "selected_photos.zip";
-          document.body.appendChild(a); // Append the element to the DOM
+          document.body.appendChild(a); 
           a.click();
-          a.remove(); // Remove the element after clicking
-          window.URL.revokeObjectURL(url); // Clean up the URL object
+          a.remove(); 
+          window.URL.revokeObjectURL(url);
         });
       } else {
         console.error('Error initiating download:', response.statusText);

@@ -4,7 +4,7 @@ const exifParser = require('exif-parser');
 const Photo = require('../models/photo');
 const fs = require('fs');
 const archiver = require('archiver');
-const path = require('path'); // Import the path module
+const path = require('path');
 
 const storage = multer.diskStorage({
     destination: 'temp/',
@@ -16,10 +16,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage }); 
 const router = express.Router();
 
-// POST endpoint for file uploads
 router.post('/upload', upload.array('photos'), async (req, res) => {
     try {
-        // Clear all existing documents from the collection
         await Photo.deleteMany({});
 
         const imageInfoArray = [];
@@ -36,7 +34,7 @@ router.post('/upload', upload.array('photos'), async (req, res) => {
             }
 
             const newPhoto = new Photo({
-                filePath: `/temp/${file.originalname}`, // Correct the file path construction
+                filePath: `/temp/${file.originalname}`, 
                 metadata: metadata
             });
 
@@ -58,19 +56,15 @@ router.post('/upload', upload.array('photos'), async (req, res) => {
 
 router.get('/getTags', async (req, res) => {
     try {
-        // Retrieve all photos from the database
         const photos = await Photo.find({});
         
-        // Extract tags from the photos
         const tags = [];
 
         photos.forEach((photo) => {
             const metadata = photo.metadata;
             if (metadata.tags) {
-                // Iterate through the keys (tags) in metadata.tags
                 for (const tag in metadata.tags) {
                     const pair = [tag, metadata.tags[tag]];
-                    // Check if the pair already exists in the tags array
                     if (!tags.some(([key, value]) => key.toString() == tag.toString() && value.toString() == metadata.tags[tag].toString())) {
                         tags.push(pair);
                     }
@@ -88,48 +82,37 @@ router.post('/downloadPhotos', async (req, res) => {
     try {
         const selectedTags = req.body.selectedTags;
 
-        // Create an array of tag queries based on selected tags
         const tagQueries = selectedTags.map(tag => {
             const [key, value] = tag.split(':');
             return { [`metadata.tags.${key}`]: value };
         });
 
-        // Combine the tag queries with $or to match any of them
         const query = { $and: tagQueries };
 
-        // Find photos based on the combined query
         const photos = await Photo.find(query);
 
-        // Create a zip archive
         const archive = archiver('zip', {
             zlib: { level: 9 }
         });
 
-        // Handle archiver errors
         archive.on('error', function(err) {
             throw err;
         });
 
-        // Log when archiving has been finalized and the output stream is closed
         archive.on('end', function() {
             console.log('Archive wrote %d bytes', archive.pointer());
         });
 
-        // Set response headers for the zip file
         res.setHeader('Content-Type', 'application/zip');
         res.setHeader('Content-Disposition', 'attachment; filename=selected_photos.zip');
 
-        // Pipe the archive to the response
         archive.pipe(res);
 
-        // Add selected photos to the archive
         photos.forEach(photo => {
             const filePath = path.join(__dirname, '..', photo.filePath);
-            console.log(filePath);
             archive.file(filePath, { name: path.basename(filePath) });
         });
 
-        // Finalize the archive
         archive.finalize();
     } catch (error) {
         console.error('Error creating and sending zip file:', error);

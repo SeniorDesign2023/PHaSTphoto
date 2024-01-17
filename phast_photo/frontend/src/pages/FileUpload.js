@@ -30,7 +30,7 @@ function FileUpload({ onNext }) {
     });
 
     try {
-      const response = await fetch('http://localhost:4000/upload', { // Change to your backend URL
+      const response = await fetch('http://localhost:4000/upload', { 
         method: 'POST',
         body: formData,
       });
@@ -39,10 +39,9 @@ function FileUpload({ onNext }) {
         throw new Error('File upload failed');
       }
 
-      // Handle success
       const result = await response.json();
       console.log('Upload successful', result);
-      onNext(); // Proceed to next step
+      onNext(); 
     } catch (error) {
       console.error('Upload error', error);
     }
