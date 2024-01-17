@@ -13,45 +13,68 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage }); 
+const upload = multer({ storage: storage });
 const router = express.Router();
 
-router.post('/upload', upload.array('photos'), async (req, res) => {
-    try {
-        await Photo.deleteMany({});
-
-        const imageInfoArray = [];
-
-        for (const file of req.files) {
-            const buffer = fs.readFileSync(file.path);
-            let metadata = null;
-
-            try {
-                const parser = exifParser.create(buffer);
-                metadata = parser.parse();
-            } catch (error) {
-                console.error('Error parsing EXIF data:', error);
+function clearTempDirectory(directory) {
+    if (fs.existsSync(directory)) {
+        fs.readdirSync(directory).forEach((file) => {
+            const curPath = path.join(directory, file);
+            if (fs.lstatSync(curPath).isDirectory()) {
+                clearTempDirectory(curPath);
+            } else {
+                fs.unlinkSync(curPath);
             }
+        });
+    }
+}
 
-            const newPhoto = new Photo({
-                filePath: `/temp/${file.originalname}`, 
-                metadata: metadata
-            });
+const clearTempMiddleware = (req, res, next) => {
+    clearTempDirectory(path.join(__dirname, '..', 'temp'));
+    next();
+};
 
-            try {
-                const savedPhoto = await newPhoto.save();
-                imageInfoArray.push(savedPhoto);
-            } catch (err) {
-                console.error('Error saving to database:', err);
-                return res.status(500).json({ message: 'Error saving photo', error: err });
-            }
+router.post('/upload', clearTempMiddleware, (req, res) => {
+    upload.array('photos')(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error uploading files', error: err });
         }
 
-        res.status(200).json({ message: 'Files uploaded and saved to database successfully', data: imageInfoArray });
-    } catch (err) {
-        console.error('Error clearing the database:', err);
-        res.status(500).json({ message: 'Error clearing the database', error: err });
-    }
+        try {
+            await Photo.deleteMany({});
+            const imageInfoArray = [];
+
+            for (const file of req.files) {
+                const buffer = fs.readFileSync(file.path);
+                let metadata = null;
+
+                try {
+                    const parser = exifParser.create(buffer);
+                    metadata = parser.parse();
+                } catch (error) {
+                    console.error('Error parsing EXIF data:', error);
+                }
+
+                const newPhoto = new Photo({
+                    filePath: `/temp/${file.originalname}`,
+                    metadata: metadata
+                });
+
+                try {
+                    const savedPhoto = await newPhoto.save();
+                    imageInfoArray.push(savedPhoto);
+                } catch (err) {
+                    console.error('Error saving to database:', err);
+                    return res.status(500).json({ message: 'Error saving photo', error: err });
+                }
+            }
+
+            res.status(200).json({ message: 'Files uploaded and saved to database successfully', data: imageInfoArray });
+        } catch (err) {
+            console.error('Error processing files:', err);
+            res.status(500).json({ message: 'Error processing files', error: err });
+        }
+    });
 });
 
 router.get('/getTags', async (req, res) => {
