@@ -89,6 +89,8 @@ router.get('/getTags', async (req, res) => {
                 for (const tag in metadata.tags) {
                     const pair = [tag, metadata.tags[tag]];
                     if (!tags.some(([key, value]) => key.toString() == tag.toString() && value.toString() == metadata.tags[tag].toString())) {
+                        //i am pretty sure this is where conditional overrides will go
+                        //pass pair into conditional formatting fiunction
                         tags.push(pair);
                     }
                 }
@@ -146,3 +148,17 @@ router.post('/downloadPhotos', async (req, res) => {
 
 
 module.exports = router;
+
+
+
+function tagComp(pear){
+    switch (pear[0]){
+        case 'DateTimeOriginal'://find date format for seasonal custom tag (date, *season*) pair
+        case 'Location'://create lola boundaries for continents. start with rectangles. maybe change to a better constraint pattern, potentially change to countries
+        case 'focal'
+    }
+}
+
+function dumbTags(pear){//function for cleaning out
+
+}
