@@ -37,8 +37,8 @@
 - Trim non-useful tags for a better user experience
 ## Confidence on completion from each team member + team average [5 pts]
 Scale of 1-5; 1 = not-confident; 3 = toss-up; 5 = confident
-Buck- 3.5
-Cody - 3.5
-Connor - 3
-Matty - 4
-Average - 3.5
+- Buck- 3.5
+- Cody - 3.5
+- Connor - 3
+- Matty - 4
+- Average - 3.5
