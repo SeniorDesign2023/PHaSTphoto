@@ -8,9 +8,6 @@
 - Matty worked on filtering superfluous tags and building logic for composing human-usable tags from existing metadata. (Still in progress at the time of writing this. 5 hours)
 - Connor added backend functionality to store photo paths and tags in a database (5 hours)
 - Cody worked on improving the look of generated tags to appear more user friendly / less confusing. Attended both meetings. Rewrote 30 lines of html code.
-2. Your choice of quantifiable metric(s)
-(e.g., hours, lines of code, meeting count, doc/test coverage %,...)
-
 ## Successes
 1. What are your accomplishments?
 - We have a working skeleton to build off of for the time being.
