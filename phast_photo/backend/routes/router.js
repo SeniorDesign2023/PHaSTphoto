@@ -107,12 +107,18 @@ router.post('/downloadPhotos', async (req, res) => {
 
         const tagQueries = selectedTags.map(tag => {
             const [key, value] = tag.split(':');
-            return { [`metadata.tags.${key}`]: value };
+            const parsedValue = isNaN(Number(value)) ? value : Number(value);
+            return { [`metadata.tags.${key}`]: parsedValue };
         });
+        
 
         const query = { $and: tagQueries };
 
         const photos = await Photo.find(query);
+
+        if (photos.length === 0) {
+            return res.status(404).json({ message: 'No photos found with the selected tags' });
+        }
 
         const archive = archiver('zip', {
             zlib: { level: 9 }
