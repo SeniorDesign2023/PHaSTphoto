@@ -41,7 +41,6 @@ router.post('/upload', clearTempMiddleware, (req, res) => {
         }
 
         try {
-            await Photo.deleteMany({});
             const imageInfoArray = [];
 
             for (const file of req.files) {
