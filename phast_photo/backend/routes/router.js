@@ -1,3 +1,4 @@
+import moment from 'moment'
 const express = require('express');
 const multer = require('multer');
 const exifParser = require('exif-parser');
@@ -5,7 +6,7 @@ const Photo = require('../models/photo');
 const fs = require('fs');
 const archiver = require('archiver');
 const path = require('path');
-
+const tags = [];/////this came from router.get
 const storage = multer.diskStorage({
     destination: 'temp/',
     filename: (req, file, cb) => {
@@ -81,7 +82,7 @@ router.get('/getTags', async (req, res) => {
     try {
         const photos = await Photo.find({});
         
-        const tags = [];
+        
 
         photos.forEach((photo) => {
             const metadata = photo.metadata;
@@ -91,7 +92,11 @@ router.get('/getTags', async (req, res) => {
                     if (!tags.some(([key, value]) => key.toString() == tag.toString() && value.toString() == metadata.tags[tag].toString())) {
                         //i am pretty sure this is where conditional overrides will go
                         //pass pair into conditional formatting fiunction
-                        tags.push(pair);
+                        //pair=tagComp(pair);
+                        if (!dumbTag(pair)){
+                            //tags.push(pair);
+                            alterTag(pair);//in the case of pushing from the function
+                        }
                     }
                 }
             }
@@ -151,14 +156,194 @@ module.exports = router;
 
 
 
-function tagComp(pear){
+function alterTag(pear){
     switch (pear[0]){
         case 'DateTimeOriginal'://find date format for seasonal custom tag (date, *season*) pair
+            var date=moment.unix(pear[1]);//nud = Non-Useless Date format
+            console.log(date.format('MM-DD-YYYY HH:mm:ss'));
+            month=date.month()+1;
+            var day=date.date();
+            if((month>3||(month==3 && day>=21)) && (month<6||(month==6 && day<21))){
+                var temp=('Season', 'Spring');
+                tags.push(temp);
+            }
+
+            else if((month>6||(month==6 && day>=21)) && (month<9||(month==9 && day<21))){
+                var temp=('Season', 'Summer');
+                tags.push(temp);
+            }
+
+            else if((month>9||(month==9 && day>=21)) && (month<12||(month==12 && day<21))){
+                var temp=('Season', 'Fall');
+                tags.push(temp);
+            }
+
+            else{
+                var temp=('Season', 'Winter');
+                tags.push(temp);
+            }
+            
+            // secondary if else block for time of day tag
+
         case 'Location'://create lola boundaries for continents. start with rectangles. maybe change to a better constraint pattern, potentially change to countries
-        case 'focal'
+        case 'FocalLengthIn35mmFormat'://will
+        case ''://make duplicates to output Aperture. one with ApertureValue, and one with FNumber
+        case '':
+        case 'LensModel':
+        case '':
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        default:
+            //return pear;
+            tags.push(pear);
     }
 }
 
-function dumbTags(pear){//function for cleaning out
+function dumbTag(pear){//function for cleaning out
+    switch (pear[0]){
 
+        case 'XResolution':
+            return true;
+        case 'YResolution':
+            return true;
+        case 'ResolutionUnit':
+            return true;
+        case 'undefined':
+            return true;
+        case 'ExposureProgram'://find out how this works and move to comparisons
+            return true;
+        case 'MeteringMode'://find out how this works and move to comparisons
+            return true;
+        case 'MaxApertureValue':
+            return true;
+        case 'LightSource':
+            return true;
+        case 'Flash':
+            return true;
+        case 'ColorSpace'://find out how this works and move to comparisons
+            return true;
+        case 'CustomRendered':
+            return true;
+        case 'WhiteBalance'://find out how this works and move to comparisons
+            return true;
+        case 'FocalPlaneYResolution':
+            return true;
+        case 'FocalPlaneXResolution':
+            return true;
+        case 'SensingMethod':
+            return true;
+        case 'FocalPlaneResolutionUnit':
+            return true;
+        case 'ExposureTime':
+            return true;
+        case 'ModifyDate':
+            return true;
+        case 'ExposureMode'://find out how this works and move to comparisons
+            return true;
+        case 'DigitalZoomRatio':
+            return true;
+        case 'SceneCaptureType':
+            return true;
+        case 'Contrast':
+            return true;
+        case 'Saturation':
+            return true;
+        case 'Sharpness':
+            return true;
+        case 'SerialNumber':
+            return true;
+        case 'CreateDate'://same as DateTimeOriginal
+            return true;
+        case 'GainControl':
+            return true;
+        case 'BrightnessValue':
+            return true;
+        case 'GPSSpeed':
+            return true;
+        case 'GPSSpeedref':
+            return true;
+        case 'ShutterSpeedValue':
+            return true;
+        case 'GPSVersionID':
+            return true;
+        case 'GPSImgDirection':
+            return true;
+        case 'GPSImgDirectionRef':
+            return true;
+        case 'GPSHPoistioningError':
+            return true;
+        case 'GPSDestBearing':
+            return true;
+        case 'SubSecTimeOriginal':
+            return true;
+        case 'SubSecTimeDigitized':
+            return true;
+        case 'SubjectArea':
+            return true;
+        case 'SensitivityType':
+            return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+        // case '':
+        //     return true;
+
+
+
+        default:
+            return false;
+    }
 }
+
+//gonna need another function for gps stuff
+//Maybe a GPS altitude tag for different landscapes?
