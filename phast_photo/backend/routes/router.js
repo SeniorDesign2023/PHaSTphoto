@@ -313,10 +313,10 @@ function dumbTag(pear){//function for cleaning out
             return true;
         case 'SensitivityType':
             return true;
-        // case '':
-        //     return true;
-        // case '':
-        //     return true;
+        case 'GPSLongitudeRef'://negative value will be west
+            return true;
+        case 'GPSLatitudeRef'://negative value will be south
+            return true;
         // case '':
         //     return true;
         // case '':
