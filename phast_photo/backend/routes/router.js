@@ -161,8 +161,9 @@ function alterTag(pear){
         case 'DateTimeOriginal'://find date format for seasonal custom tag (date, *season*) pair
             var date=moment.unix(pear[1]);//nud = Non-Useless Date format
             console.log(date.format('MM-DD-YYYY HH:mm:ss'));
-            month=date.month()+1;
+            var month=date.month()+1;
             var day=date.date();
+            var clock=date.hour();//military time
             if((month>3||(month==3 && day>=21)) && (month<6||(month==6 && day<21))){
                 var temp=('Season', 'Spring');
                 tags.push(temp);
@@ -185,6 +186,21 @@ function alterTag(pear){
             
             // secondary if else block for time of day tag
 
+            if(clock<4||clock>=22){
+                var temp = ('Daytime', 'Night')
+            }
+            else if(clock>=4 && clock<10){
+                var temp = ('Daytime', 'Morning')
+            }
+            else if(clock>=10 && clock<14){
+                var temp = ('Daytime', 'Midday')
+            }
+            else if(clock>=14 && clock<18){
+                var temp = ('Daytime', 'Afternoon')
+            }
+            else {
+                var temp = ('Daytime', 'Evening')
+            }
         case 'Location'://create lola boundaries for continents. start with rectangles. maybe change to a better constraint pattern, potentially change to countries
         case 'FocalLengthIn35mmFormat'://will
         case ''://make duplicates to output Aperture. one with ApertureValue, and one with FNumber
