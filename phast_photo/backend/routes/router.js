@@ -206,13 +206,23 @@ function alterTag(pear) {
         // Handle other cases as needed
 
 
-        case 'Location'://create lola boundaries for continents. start with rectangles. maybe change to a better constraint pattern, potentially change to countries
+        //case 'Location'://create lola boundaries for continents. start with rectangles. maybe change to a better constraint pattern, potentially change to countries
         case 'FocalLengthIn35mmFormat'://will
             addUniqueTag(['FocalLength', pear[1]]);
             break;
-        //case ''://make duplicates to output Aperture. one with ApertureValue, and one with FNumber
-        //case '':
-        //case 'LensModel':
+        case 'ApertureValue':
+            addUniqueTag(['Aperture', pear[1]]);
+            break;
+            //make duplicates to output Aperture. one with ApertureValue, and one with FNumber
+        case 'FNumber':
+            addUniqueTag(['Aperture', pear[1]]);
+            break;
+        case 'LensModel':
+            addUniqueTag(['Lens Model', pear[1]]);
+            break;
+        case 'LensMake':
+            addUniqueTag(['Lens Make', pear[1]]);
+            break;
         //case '':
 
 
