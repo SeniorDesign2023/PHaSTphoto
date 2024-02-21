@@ -1,4 +1,4 @@
-import moment from 'moment'
+const moment= require('moment');
 const express = require('express');
 const multer = require('multer');
 const exifParser = require('exif-parser');
@@ -6,6 +6,7 @@ const Photo = require('../models/photo');
 const fs = require('fs');
 const archiver = require('archiver');
 const path = require('path');
+const { exit } = require('process');
 const tags = [];/////this came from router.get
 const storage = multer.diskStorage({
     destination: 'temp/',
@@ -171,42 +172,43 @@ function alterTag(pear){
             var day=date.date();
             var clock=date.hour();//military time
             if((month>3||(month==3 && day>=21)) && (month<6||(month==6 && day<21))){
-                var temp=('Season', 'Spring');
-                tags.push(temp);
+                
+                tags.push['Season', 'Spring'];
             }
 
             else if((month>6||(month==6 && day>=21)) && (month<9||(month==9 && day<21))){
-                var temp=('Season', 'Summer');
-                tags.push(temp);
+                
+                tags.push['Season', 'Summer'];
             }
 
             else if((month>9||(month==9 && day>=21)) && (month<12||(month==12 && day<21))){
-                var temp=('Season', 'Fall');
-                tags.push(temp);
+                
+                tags.push['Season', 'Fall'];
             }
 
             else{
-                var temp=('Season', 'Winter');
-                tags.push(temp);
+                
+                tags.push['Season', 'Winter'];
             }
             
             // secondary if else block for time of day tag
 
             if(clock<4||clock>=22){
-                var temp = ('Daytime', 'Night')
+                tags.push['Daytime', 'Night'];
             }
             else if(clock>=4 && clock<10){
-                var temp = ('Daytime', 'Morning')
+                tags.push['Daytime', 'Morning'];
             }
             else if(clock>=10 && clock<14){
-                var temp = ('Daytime', 'Midday')
+                tags.push['Daytime', 'Midday'];
             }
             else if(clock>=14 && clock<18){
-                var temp = ('Daytime', 'Afternoon')
+                tags.push['Daytime', 'Afternoon'];
             }
             else {
-                var temp = ('Daytime', 'Evening')
+                tags.push['Daytime', 'Evening'];
             }
+            break;
         case 'Location'://create lola boundaries for continents. start with rectangles. maybe change to a better constraint pattern, potentially change to countries
         case 'FocalLengthIn35mmFormat'://will
         case ''://make duplicates to output Aperture. one with ApertureValue, and one with FNumber
@@ -323,16 +325,16 @@ function dumbTag(pear){//function for cleaning out
             return true;
         case 'GPSLatitudeRef'://negative value will be south
             return true;
-        // case '':
-        //     return true;
-        // case '':
-        //     return true;
-        // case '':
-        //     return true;
-        // case '':
-        //     return true;
-        // case '':
-        //     return true;
+        case 'S':
+            return true;
+        case 'LensInfo':
+            return true;
+        case 'LensSerialNumber':
+            return true;
+        case 'ExposureCompensation':
+            return true;
+        case 'SubjectDistanceRange':
+            return true;
         // case '':
         //     return true;
         // case '':
