@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import './FileUpload.css';;
+import './FileUpload.css';
+import { toast, ToastContainer } from 'react-toastify'; // Fixed import
+import 'react-toastify/dist/ReactToastify.css';
 
 function FileUpload({ onNext }) {
   const [files, setFiles] = useState([]);
@@ -14,7 +16,7 @@ function FileUpload({ onNext }) {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     multiple: true,
-    accept: {'image/*': ['.jpeg', '.jpg']}
+    accept: { 'image/*': ['.jpeg', '.jpg'] }
   });
 
   const filesList = files.map(file => (
@@ -30,7 +32,7 @@ function FileUpload({ onNext }) {
     });
 
     try {
-      const response = await fetch('http://localhost:4000/upload', { 
+      const response = await fetch('http://localhost:4000/upload', {
         method: 'POST',
         body: formData,
       });
@@ -41,7 +43,7 @@ function FileUpload({ onNext }) {
 
       const result = await response.json();
       console.log('Upload successful', result);
-      onNext(); 
+      onNext();
     } catch (error) {
       console.error('Upload error', error);
     }
@@ -49,6 +51,27 @@ function FileUpload({ onNext }) {
 
   const handleNext = () => {
     uploadFiles();
+  };
+
+  const handleDeleteStoredPhotos = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/deleteStoredPhotos', {
+        method: 'POST'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete stored photos');
+      }
+
+      const data = await response.json();
+
+      toast(data.message);
+
+      setFiles([]);
+    } catch (error) {
+      console.error('Error deleting stored photos', error);
+      // Handle error
+    }
   };
 
   return (
@@ -66,9 +89,11 @@ function FileUpload({ onNext }) {
           <ul>{filesList}</ul>
         </div>
       )}
-      <div className="next-button-container">
+      <div className="button-container">
         <button onClick={handleNext} className="next-button" disabled={files.length === 0}>Tag Photos</button>
+        <button onClick={handleDeleteStoredPhotos} className="delete-button">Delete Stored Photos</button>
       </div>
+      <ToastContainer />
     </div>
   );
 }

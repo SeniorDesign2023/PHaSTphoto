@@ -41,6 +41,8 @@ router.post('/upload', clearTempMiddleware, (req, res) => {
         }
 
         try {
+            await Photo.deleteMany({});
+
             const imageInfoArray = [];
 
             for (const file of req.files) {
@@ -75,6 +77,7 @@ router.post('/upload', clearTempMiddleware, (req, res) => {
         }
     });
 });
+
 
 router.get('/getTags', async (req, res) => {
     try {
@@ -148,6 +151,14 @@ router.post('/downloadPhotos', async (req, res) => {
     }
 });
 
-
+router.post('/deleteStoredPhotos', async (req, res) => {
+    try {
+        await Photo.deleteMany({});
+        res.status(200).json({ message: 'Stored photos deleted successfully'});
+    } catch (error) {
+        console.error('Error deleting stored photos', error);
+        res.status(500).json({ message: 'Error creating and sending zip file', error: error });
+    }
+});
 
 module.exports = router;
