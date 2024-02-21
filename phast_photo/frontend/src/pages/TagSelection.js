@@ -67,30 +67,47 @@ function TagSelection() {
     } catch (error) {
       console.error('Error initiating download:', error);
     }
-};
+  };
 
-  return (
-    <div className="tag-selection-container">
-      <h1>Select Tags</h1>
-      <div className="checkboxes-container">
-        {tags.map(([key, value]) => (
-          <div key={`${key}:${value}`} className="checkbox-label">
-            <input
-              type="checkbox"
-              id={`${key}:${value}`}
-              value={`${key}:${value}`}
-              checked={selectedTags.includes(`${key}:${value}`)}
-              onChange={handleTagChange}
-            />
-            {key} : {value}
+
+
+  const groupedTags = tags.reduce((groups, [key, value]) => {
+    if (!groups[key]) {
+      groups[key] = [];
+    }
+    groups[key].push(value);
+    return groups;
+  }, {});
+
+return (
+  <div className="tag-selection-container">
+    <h1>Select Tags</h1>
+    <div className="tag-groups-container">
+      {Object.entries(groupedTags).map(([key, values]) => (
+        <div key={key} className="tag-group">
+          <h2>{key}</h2>
+          <div className="checkboxes-container">
+            {values.map(value => (
+              <div key={`${key}:${value}`} className="checkbox-label">
+                <input
+                  type="checkbox"
+                  id={`${key}:${value}`}
+                  value={`${key}:${value}`}
+                  checked={selectedTags.includes(`${key}:${value}`)}
+                  onChange={handleTagChange}
+                />
+                {value}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <button onClick={handleDownload} className="download-button">
-        Download Photos
-      </button>
+        </div>
+      ))}
     </div>
-  );  
+    <button onClick={handleDownload} className="download-button">
+      Download Photos
+    </button>
+  </div>
+);
 }
 
 export default TagSelection;
