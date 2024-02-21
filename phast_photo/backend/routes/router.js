@@ -163,78 +163,50 @@ module.exports = router;
 
 
 
-function alterTag(pear){
-    switch (pear[0]){
-        case 'DateTimeOriginal'://find date format for seasonal custom tag (date, *season*) pair
-            var date=moment.unix(pear[1]);//nud = Non-Useless Date format
-            console.log(date.format('MM-DD-YYYY HH:mm:ss'));
-            var month=date.month()+1;
-            var day=date.date();
-            var clock=date.hour();//military time
-            if((month>3||(month==3 && day>=21)) && (month<6||(month==6 && day<21))){
-                
-                tags.push['Season', 'Spring'];
+function alterTag(pear) {
+    // Define a helper function to add a tag if it doesn't exist
+    function addUniqueTag(newTag) {
+        // Check if the tag (both key and value) already exists in the tags array
+        if (!tags.some(tag => tag[0] === newTag[0] && tag[1] === newTag[1])) {
+            tags.push(newTag);
+        }
+    }
+
+    switch (pear[0]) {
+        case 'DateTimeOriginal':
+            var date = moment.unix(pear[1]);
+            var month = date.month() + 1;
+            var day = date.date();
+            var clock = date.hour();
+
+            // Determine season and add it if unique
+            if ((month > 3 || (month == 3 && day >= 21)) && (month < 6 || (month == 6 && day < 21))) {
+                addUniqueTag(['Season', 'Spring']);
+            } else if ((month > 6 || (month == 6 && day >= 21)) && (month < 9 || (month == 9 && day < 21))) {
+                addUniqueTag(['Season', 'Summer']);
+            } else if ((month > 9 || (month == 9 && day >= 21)) && (month < 12 || (month == 12 && day < 21))) {
+                addUniqueTag(['Season', 'Fall']);
+            } else {
+                addUniqueTag(['Season', 'Winter']);
             }
 
-            else if((month>6||(month==6 && day>=21)) && (month<9||(month==9 && day<21))){
-                
-                tags.push['Season', 'Summer'];
-            }
-
-            else if((month>9||(month==9 && day>=21)) && (month<12||(month==12 && day<21))){
-                
-                tags.push['Season', 'Fall'];
-            }
-
-            else{
-                
-                tags.push['Season', 'Winter'];
-            }
-            
-            // secondary if else block for time of day tag
-
-            if(clock<4||clock>=22){
-                tags.push['Daytime', 'Night'];
-            }
-            else if(clock>=4 && clock<10){
-                tags.push['Daytime', 'Morning'];
-            }
-            else if(clock>=10 && clock<14){
-                tags.push['Daytime', 'Midday'];
-            }
-            else if(clock>=14 && clock<18){
-                tags.push['Daytime', 'Afternoon'];
-            }
-            else {
-                tags.push['Daytime', 'Evening'];
+            // Determine time of day and add it if unique
+            if (clock < 4 || clock >= 22) {
+                addUniqueTag(['Daytime', 'Night']);
+            } else if (clock >= 4 && clock < 10) {
+                addUniqueTag(['Daytime', 'Morning']);
+            } else if (clock >= 10 && clock < 14) {
+                addUniqueTag(['Daytime', 'Midday']);
+            } else if (clock >= 14 && clock < 18) {
+                addUniqueTag(['Daytime', 'Afternoon']);
+            } else {
+                addUniqueTag(['Daytime', 'Evening']);
             }
             break;
-        case 'Location'://create lola boundaries for continents. start with rectangles. maybe change to a better constraint pattern, potentially change to countries
-        case 'FocalLengthIn35mmFormat'://will
-        case ''://make duplicates to output Aperture. one with ApertureValue, and one with FNumber
-        case '':
-        case 'LensModel':
-        case '':
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        // Handle other cases as needed
         default:
-            //return pear;
-            tags.push(pear);
+            // Add the original tag if it's unique
+            addUniqueTag(pear);
     }
 }
 
