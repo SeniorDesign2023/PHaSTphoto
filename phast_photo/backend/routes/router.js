@@ -161,16 +161,16 @@ router.post('/downloadPhotos', async (req, res) => {
 
 module.exports = router;
 
-
+function addUniqueTag(newTag) {
+    // Check if the tag (both key and value) already exists in the tags array
+    if (!tags.some(tag => tag[0] == newTag[0] && tag[1] == newTag[1])) {
+        tags.push(newTag);
+    }
+}
 
 function alterTag(pear) {
     // Define a helper function to add a tag if it doesn't exist
-    function addUniqueTag(newTag) {
-        // Check if the tag (both key and value) already exists in the tags array
-        if (!tags.some(tag => tag[0] === newTag[0] && tag[1] === newTag[1])) {
-            tags.push(newTag);
-        }
-    }
+    
 
     switch (pear[0]) {
         case 'DateTimeOriginal':
@@ -204,6 +204,19 @@ function alterTag(pear) {
             }
             break;
         // Handle other cases as needed
+
+
+        case 'Location'://create lola boundaries for continents. start with rectangles. maybe change to a better constraint pattern, potentially change to countries
+        case 'FocalLengthIn35mmFormat'://will
+            addUniqueTag(['FocalLength', pear[1]]);
+            break;
+        //case ''://make duplicates to output Aperture. one with ApertureValue, and one with FNumber
+        //case '':
+        //case 'LensModel':
+        //case '':
+
+
+
         default:
             // Add the original tag if it's unique
             addUniqueTag(pear);
