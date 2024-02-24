@@ -33,9 +33,9 @@
 - We need help generating specific goals and deadlines to make sure that our product is fleshed out by the due date. Our mentor can help set these goals and deadlines for each individual and maybe give us some pointers on how to more collaboratively work together.
 - We may need advice on specific design choices for how the website looks and feels. What features could be added to make our website more useful?
 ## Changes/Deviation from Plan ​(if applicable - if not, say so!)
-- We are intending for our website to be used by a user for a single session at a time. Certain limitations on how we can store and retrieve photos require our website to be used this way.
+- We intend for our website to be used by a user for a single session at a time. Certain limitations on how we can store and retrieve photos require our website to be used this way.
 ## Details Description of Goals/ Plan for ​Next 3 Weeks [5pts]
-- Our goals for the next 3 weeks are to meet with Lars and come up with a plan of attack on how to maximize the functionality of the product in the short amount of time that we have left. We are then going to attack the code with a fiery vigor and implement as many new features as possible to give the end user as much customizability as possible. We plan to have some more meat on the bones at the end of these three weeks. 
+- Our goals for the next 3 weeks are to meet with Lars and come up with a plan of attack on how to maximize the functionality of the product in the short amount of time that we have left. We'll then get to work on the code and implement as many new features as possible to give the end user as much customizability as possible. We plan to have significantly more substance to our project at the end of these three weeks. 
 ## Confidence on completion from each team member + team average [5 pts]
 Scale of 1-5; 1 = not-confident; 3 = toss-up; 5 = confident
 - Buck- 3
