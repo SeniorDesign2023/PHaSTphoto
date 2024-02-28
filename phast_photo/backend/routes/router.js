@@ -204,16 +204,16 @@ function alterTag(pear) {
             }
             break;
         //case 'Location'://create lola boundaries for continents. start with rectangles. maybe change to a better constraint pattern, potentially change to countries
-        case 'FocalLengthIn35mmFormat'://will
-            addUniqueTag(['FocalLength', pear[1]]);
-            break;
+        // case 'FocalLengthIn35mmFormat'://will
+        //     addUniqueTag(['FocalLength', pear[1]]);
+        //     break;
         case 'ApertureValue':
             addUniqueTag(['Aperture', pear[1]]);
             break;
             //make duplicates to output Aperture. one with ApertureValue, and one with FNumber
-        case 'FNumber':
-            addUniqueTag(['Aperture', pear[1]]);
-            break;
+        // case 'FNumber':
+        //     addUniqueTag(['Aperture', pear[1]]);
+        //     break;
         case 'LensModel':
             addUniqueTag(['Lens Model', pear[1]]);
             break;
@@ -327,10 +327,10 @@ function dumbTag(pear){//function for cleaning out
             return true;
         case 'SubjectDistanceRange':
             return true;
-        // case '':
-        //     return true;
-        // case '':
-        //     return true;
+        case 'FocalLengthIn35mmFormat':
+            return true;
+        case 'FNumber':
+            return true;
         // case '':
         //     return true;
         // case '':
@@ -374,3 +374,5 @@ function createSchemaString(taggz){
 
 //gonna need another function for gps stuff
 //Maybe a GPS altitude tag for different landscapes?
+
+//generate a uid for a session and save it as a cookie and then stor in the URL
