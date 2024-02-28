@@ -203,9 +203,6 @@ function alterTag(pear) {
                 addUniqueTag(['Daytime', 'Evening']);
             }
             break;
-        // Handle other cases as needed
-
-
         //case 'Location'://create lola boundaries for continents. start with rectangles. maybe change to a better constraint pattern, potentially change to countries
         case 'FocalLengthIn35mmFormat'://will
             addUniqueTag(['FocalLength', pear[1]]);
@@ -362,6 +359,17 @@ function dumbTag(pear){//function for cleaning out
         default:
             return false;
     }
+}
+function createSchemaString(taggz){
+    temp='';
+    num=0
+    for(i=0; i<=taggz.length(); i++){
+        temp.concat(tag[0], ': ', tag[1]);
+        if(i<taggz.length()-1){
+            temp.concat(', ')
+        }
+    }
+    return temp;
 }
 
 //gonna need another function for gps stuff
