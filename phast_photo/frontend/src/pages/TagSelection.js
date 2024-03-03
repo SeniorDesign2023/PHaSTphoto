@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './TagSelection.css';
 
 function TagSelection() {
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState({});
   const [selectedTags, setSelectedTags] = useState([]);
 
   const fetchTags = async () => {
@@ -70,44 +70,35 @@ function TagSelection() {
   };
 
 
-
-  const groupedTags = tags.reduce((groups, [key, value]) => {
-    if (!groups[key]) {
-      groups[key] = [];
-    }
-    groups[key].push(value);
-    return groups;
-  }, {});
-
-return (
-  <div className="tag-selection-container">
-    <h1>Select Tags</h1>
-    <div className="tag-groups-container">
-      {Object.entries(groupedTags).map(([key, values]) => (
-        <div key={key} className="tag-group">
-          <h2>{key}</h2>
-          <div className="checkboxes-container">
-            {values.map(value => (
-              <div key={`${key}:${value}`} className="checkbox-label">
-                <input
-                  type="checkbox"
-                  id={`${key}:${value}`}
-                  value={`${key}:${value}`}
-                  checked={selectedTags.includes(`${key}:${value}`)}
-                  onChange={handleTagChange}
-                />
-                {value}
-              </div>
-            ))}
+ return (
+    <div className="tag-selection-container">
+      <h1>Select Tags</h1>
+      <div className="tag-groups-container">
+        {Object.entries(tags).map(([key, values]) => (
+          <div key={key} className="tag-group">
+            <h2>{key}</h2>
+            <div className="checkboxes-container">
+              {values.map(value => (
+                <div key={`${key}:${value}`} className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    id={`${key}:${value}`}
+                    value={`${key}:${value}`}
+                    checked={selectedTags.includes(`${key}:${value}`)}
+                    onChange={handleTagChange}
+                  />
+                  <label htmlFor={`${key}:${value}`}>{value}</label>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+      <button onClick={handleDownload} className="download-button">
+        Download Photos
+      </button>
     </div>
-    <button onClick={handleDownload} className="download-button">
-      Download Photos
-    </button>
-  </div>
-);
+  );
 }
 
 export default TagSelection;
