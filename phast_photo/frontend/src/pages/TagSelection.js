@@ -10,7 +10,15 @@ function TagSelection() {
       const response = await fetch('http://localhost:4000/getTags');
       if (response.ok) {
         const data = await response.json();
-        setTags(data.tags);
+        
+        // Process the data to split GptGeneratedTags into individual tags and remove duplicates
+        const processedTags = { ...data.tags };
+        if (processedTags.GptGeneratedTags && processedTags.GptGeneratedTags.length) {
+          // Create a set to remove duplicates, then convert it back to an array
+          processedTags.GptGeneratedTags = [...new Set(processedTags.GptGeneratedTags.flat().flatMap(tag => tag.split(',')))];
+        }
+  
+        setTags(processedTags);
       } else {
         console.error('Error fetching tags:', response.statusText);
       }
@@ -25,14 +33,15 @@ function TagSelection() {
 
   const handleTagChange = (event) => {
     const tag = event.target.value;
-
-    setSelectedTags((prevSelectedTags) => {
-      if (prevSelectedTags.includes(tag)) {
-        return prevSelectedTags.filter((selectedTag) => selectedTag !== tag);
-      } else {
-        return [...prevSelectedTags, tag];
-      }
-    });
+    const isChecked = event.target.checked;
+  
+    if (isChecked) {
+      // Add the tag to the selectedTags array if it's checked
+      setSelectedTags(prevSelectedTags => [...prevSelectedTags, tag]);
+    } else {
+      // Remove the tag from the selectedTags array if it's unchecked
+      setSelectedTags(prevSelectedTags => prevSelectedTags.filter(t => t !== tag));
+    }
   };
 
   const handleDownload = async () => {
@@ -70,29 +79,36 @@ function TagSelection() {
   };
 
 
- return (
+  return (
     <div className="tag-selection-container">
       <h1>Select Tags</h1>
       <div className="tag-groups-container">
-        {Object.entries(tags).map(([key, values]) => (
-          <div key={key} className="tag-group">
-            <h2>{key}</h2>
-            <div className="checkboxes-container">
-              {values.map(value => (
-                <div key={`${key}:${value}`} className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    id={`${key}:${value}`}
-                    value={`${key}:${value}`}
-                    checked={selectedTags.includes(`${key}:${value}`)}
-                    onChange={handleTagChange}
-                  />
-                  <label htmlFor={`${key}:${value}`}>{value}</label>
-                </div>
-              ))}
+        {Object.entries(tags).map(([key, values]) => {
+          // If values is not an array, make it an array
+          if (!Array.isArray(values)) {
+            values = [values];
+          }
+          return (
+            <div key={key} className="tag-group">
+              <h2>{key}</h2>
+              <div className="checkboxes-container">
+                {values.map((value, index) => (
+                  <div key={`${key}:${index}`} className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      id={`${key}:${index}`}
+                      name={key}
+                      value={`${key}:${value.trim()}`}
+                      checked={selectedTags.includes(`${key}:${value.trim()}`)}
+                      onChange={handleTagChange}
+                    />
+                    <label htmlFor={`${key}:${index}`}>{value.trim()}</label>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       <button onClick={handleDownload} className="download-button">
         Download Photos

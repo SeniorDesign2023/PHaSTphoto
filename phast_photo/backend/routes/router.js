@@ -7,6 +7,8 @@ const fs = require('fs');
 const archiver = require('archiver');
 const path = require('path');
 const router = express.Router();
+const axios = require('axios');
+const api_key = process.env.OPENAI_API_KEY;
 
 const storage = multer.diskStorage({
     destination: 'temp/',
@@ -35,49 +37,97 @@ const clearTempMiddleware = (req, res, next) => {
     next();
 };
 
+function encodeImage(imagePath) {
+    console.log("Encoding image at path:", imagePath);
+    let imageBase64 = fs.readFileSync(imagePath, { encoding: 'base64' });
+    console.log("Encoded image string (snippet):", imageBase64.substring(0, 100));
+    return imageBase64;
+}
+
+async function getTagsFromOpenAI(imagePath) {
+    let imageBase64 = encodeImage(imagePath);
+    let headers = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${api_key}`
+    };
+
+    let payload = {
+        "model": "gpt-4-vision-preview",
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "Tag this image from this list of tags, giving nothing but these tags in the output: sunset, nature, beach, cityscape, landscape, portrait, wildlife, street, architecture, food, flowers, mountains, sea, forest, urban, art, sky, people, person, animals, holiday, garden, river, lake, underwater, animal."
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": `data:image/jpeg;base64,${imageBase64}`
+                        }
+                    }
+                ]
+            }
+        ],
+        "max_tokens": 300
+    };
+
+    console.log("Sending payload to OpenAI:", JSON.stringify(payload, null, 2));
+
+    try {
+        const response = await axios.post("https://api.openai.com/v1/chat/completions", payload, { headers: headers });
+        const tags = response.data.choices[0].message.content;
+        return tags; 
+    } catch (error) {
+        console.error('Error fetching tags from OpenAI:', error);
+        if (error.response) {
+            console.error('Error response data:', error.response.data);
+        }
+        return [];
+    }
+}
+
 router.post('/upload', clearTempMiddleware, (req, res) => {
     upload.array('photos')(req, res, async (err) => {
         if (err) {
             return res.status(500).json({ message: 'Error uploading files', error: err });
         }
+        await Photo.deleteMany({});
+        const imageInfoArray = [];
 
-        try {
-            await Photo.deleteMany({});
-            const imageInfoArray = [];
+        for (const file of req.files) {
+            let metadata = null;
 
-            for (const file of req.files) {
+            try {
                 const buffer = fs.readFileSync(file.path);
-                let metadata = null;
-
-                try {
-                    const parser = exifParser.create(buffer);
-                    metadata = parser.parse();
-                } catch (error) {
-                    console.error('Error parsing EXIF data:', error);
-                }
-
-                // Alter and clean metadata tags before saving
+                const parser = exifParser.create(buffer);
+                metadata = parser.parse();
                 alterAndCleanMetadata(metadata);
 
+                if(api_key)
+                {
+                    const openAITagsString = await getTagsFromOpenAI(file.path);
+
+                    const openAITagsArray = openAITagsString.split(', ').map(tag => tag.trim());
+    
+                    metadata.tags['GptGeneratedTags'] = openAITagsArray;
+                }
+                
                 const newPhoto = new Photo({
                     filePath: `/temp/${file.originalname}`,
                     metadata: metadata
                 });
 
-                try {
-                    await newPhoto.save();
-                    imageInfoArray.push(newPhoto);
-                } catch (err) {
-                    console.error('Error saving to database:', err);
-                    return res.status(500).json({ message: 'Error saving photo', error: err });
-                }
-            }
+                await newPhoto.save();
+                imageInfoArray.push(newPhoto);
 
-            res.status(200).json({ message: 'Files uploaded and saved to database successfully', data: imageInfoArray });
-        } catch (err) {
-            console.error('Error processing files:', err);
-            res.status(500).json({ message: 'Error processing files', error: err });
+            } catch (error) {
+                console.error('Error processing file:', error);
+            }
         }
+
+        res.status(200).json({ message: 'Files uploaded and saved to database successfully', data: imageInfoArray });
     });
 });
 
@@ -96,7 +146,7 @@ function alterTag(metadata, key, value) {
     switch (key) {
         case 'DateTimeOriginal':
             alterDateTimeOriginal(metadata, value);
-            delete metadata.tags[key];  // Remove the DateTimeOriginal after processing
+            delete metadata.tags[key];  
             break;
         case 'ApertureValue':
             metadata.tags['Aperture'] = value;
@@ -216,12 +266,16 @@ router.post('/downloadPhotos', async (req, res) => {
 
         const tagQueries = selectedTags.map(tag => {
             const [key, value] = tag.split(':');
-            const parsedValue = isNaN(Number(value)) ? value : Number(value);
-            return { [`metadata.tags.${key}`]: parsedValue };
+            if (key === 'GptGeneratedTags') {
+                // Use $in to match any of the tags in the array
+                return { [`metadata.tags.${key}`]: { $in: [value] } };
+            } else {
+                const parsedValue = isNaN(Number(value)) ? value : Number(value);
+                return { [`metadata.tags.${key}`]: parsedValue };
+            }
         });
-        
 
-        const query = { $and: tagQueries };
+        const query = { $or: tagQueries };
 
         const photos = await Photo.find(query);
 
