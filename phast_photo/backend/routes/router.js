@@ -100,14 +100,28 @@ function alterTag(metadata, key, value) {
             break;
         case 'ApertureValue':
             metadata.tags['Aperture'] = value;
+            delete metadata.tags[key];
             break;
         case 'LensModel':
             metadata.tags['Lens Model'] = value;
+            delete metadata.tags[key];
             break;
         case 'LensMake':
             metadata.tags['Lens Make'] = value;
+            delete metadata.tags[key];
             break;
-        // Add more cases as necessary
+            case 'GPSLatitude':
+                case 'GPSLongitude':
+                    metadata.tags[key] = value;
+                    
+                    if (metadata.tags['GPSLatitude'] !== undefined && metadata.tags['GPSLongitude'] !== undefined) {
+                        const continent = getContinent(parseFloat(metadata.tags['GPSLatitude']), parseFloat(metadata.tags['GPSLongitude']));
+                        metadata.tags['Continent'] = continent;
+        
+                        delete metadata.tags['GPSLatitude'];
+                        delete metadata.tags['GPSLongitude'];
+                    }
+                    break;
         default:
             // Leave other tags as they are
             break;
@@ -155,6 +169,26 @@ function getTimeOfDay(clock) {
     }
 }
 
+function getContinent(latitude, longitude) {
+    if (latitude > 12 && latitude < 55 && longitude > -24 && longitude < 74) {
+        return 'Europe';
+    } else if (latitude > -35 && latitude < 34 && longitude > -18 && longitude < 51) {
+        return 'Africa';
+    } else if (latitude > 5 && latitude < 71 && longitude > 19 && longitude < 169) {
+        return 'Asia';
+    } else if (latitude > -55 && latitude < 12 && longitude > -82 && longitude < -34) {
+        return 'South America';
+    } else if (latitude > 24 && latitude < 72 && longitude > -169 && longitude < -52) {
+        return 'North America';
+    } else if (latitude > -90 && latitude < -55 && longitude > -180 && longitude < 180) {
+        return 'Antarctica';
+    } else if (latitude > -10 && latitude < -55 && longitude > 110 && longitude < 180) {
+        return 'Australia';
+    } else {
+        return 'Unknown';
+    }
+}
+
 function dumbTag({ key, value }) {
     // Define tags to be ignored
     const ignoredTags = [
@@ -170,7 +204,7 @@ function dumbTag({ key, value }) {
         'GPSDestBearing', 'SubSecTimeOriginal', 'SubSecTimeDigitized', 'SubjectArea',
         'SensitivityType', 'GPSLongitudeRef', 'GPSLatitudeRef', 'S', 'LensInfo',
         'LensSerialNumber', 'ExposureCompensation', 'SubjectDistanceRange',
-        'FocalLengthIn35mmFormat', 'FNumber'
+        'FocalLengthIn35mmFormat', 'FNumber', 'GPSAltitude', 'GPSDestBearingRef'
     ];
 
     return ignoredTags.includes(key);
@@ -253,8 +287,5 @@ router.get('/getTags', async (req, res) => {
         res.status(500).json({ message: 'Error fetching tags', error: err });
     }
 });
-
-
-
 
 module.exports = router;
