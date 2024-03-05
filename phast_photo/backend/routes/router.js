@@ -38,9 +38,7 @@ const clearTempMiddleware = (req, res, next) => {
 };
 
 function encodeImage(imagePath) {
-    console.log("Encoding image at path:", imagePath);
     let imageBase64 = fs.readFileSync(imagePath, { encoding: 'base64' });
-    console.log("Encoded image string (snippet):", imageBase64.substring(0, 100));
     return imageBase64;
 }
 
@@ -73,7 +71,6 @@ async function getTagsFromOpenAI(imagePath) {
         "max_tokens": 300
     };
 
-    console.log("Sending payload to OpenAI:", JSON.stringify(payload, null, 2));
 
     try {
         const response = await axios.post("https://api.openai.com/v1/chat/completions", payload, { headers: headers });
@@ -275,7 +272,7 @@ router.post('/downloadPhotos', async (req, res) => {
             }
         });
 
-        const query = { $or: tagQueries };
+        const query = { $and: tagQueries };
 
         const photos = await Photo.find(query);
 
