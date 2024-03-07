@@ -29,3 +29,18 @@
     padding: 10px; 
     margin: 10px; 
 }
+
+.thumbnail-container {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    background: #f0f0f0;
+    padding: 10px;
+    border: 1px solid #ccc; 
+}
+  
+.thumbnail-container img {
+    margin-right: 10px;
+    width: 200px;
+    object-fit: contain;
+}

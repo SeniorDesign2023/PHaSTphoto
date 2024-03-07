@@ -4,6 +4,7 @@ import './TagSelection.css';
 function TagSelection() {
   const [tags, setTags] = useState({});
   const [selectedTags, setSelectedTags] = useState([]);
+  const [photoPaths, setPhotoPaths] = useState([]);
 
   const fetchTags = async () => {
     try {
@@ -29,6 +30,7 @@ function TagSelection() {
 
   useEffect(() => {
     fetchTags();
+    fetchPhotos();
   }, []);
 
   const handleTagChange = (event) => {
@@ -78,6 +80,19 @@ function TagSelection() {
     }
   };
 
+  const fetchPhotos = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/listPhotoPaths');
+      if (response.ok) {
+        const data = await response.json();
+        setPhotoPaths(data.photoData);
+      } else {
+        console.error('Error fetching photos:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching photos:', error);
+    }
+  };
 
   return (
     <div className="tag-selection-container">
@@ -109,6 +124,11 @@ function TagSelection() {
             </div>
           );
         })}
+      </div>
+      <div className="thumbnail-container">
+        {photoPaths.map((photoPath, index) => (
+          <img key={index} src={`http://localhost:4000${photoPath.filePath}`} alt={`${index}`} />
+        ))}
       </div>
       <button onClick={handleDownload} className="download-button">
         Download Photos
