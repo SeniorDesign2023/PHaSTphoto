@@ -339,4 +339,23 @@ router.get('/getTags', async (req, res) => {
     }
 });
 
+router.use('/getPhotos', express.static(path.join(__dirname, '..', 'temp')));
+
+router.get('/listPhotoPaths', (req, res) => {
+    const directoryPath = path.join(__dirname, '..', 'temp');
+  
+    fs.readdir(directoryPath, (err, files) => {
+      if (err) {
+        console.error('Error getting files:', err);
+        res.status(500).send('Error getting files');
+      } else {
+        const photoData = files.map(filename => ({
+          filename,
+          filePath: `/getPhotos/${filename}`
+        }));
+        res.json({ photoData });
+      }
+    });
+});
+
 module.exports = router;
