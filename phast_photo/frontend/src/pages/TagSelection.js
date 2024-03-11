@@ -161,11 +161,16 @@ function TagSelection() {
 
   return (
     <div>
-      <div className="toolbar">
+    <div className="toolbar">
+      <div className="button-container">
         <input id="file-input" type="file" onChange={handleFileInputChange} style={{ display: 'none' }} multiple />
         <button onClick={handleToggleUpload} className="toolbar-button">Upload Photos</button>
         <button onClick={handleClearPhotos} className="toolbar-button">Clear Photos</button>
       </div>
+      <div className="logo-container">
+        <img src="/logo192.png" alt="Logo" className="logo" />
+      </div>
+    </div>
       <div className="tag-selection-container">
         <h1>Select Tags</h1>
         <div className="tag-groups-container">

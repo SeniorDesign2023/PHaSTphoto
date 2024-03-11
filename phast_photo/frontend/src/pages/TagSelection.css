@@ -63,6 +63,9 @@
 }
 
 .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: #007bff; /* Blue background color */
     color: #fff; /* White text color */
     padding: 10px; /* Adjust padding as needed */
@@ -101,3 +104,12 @@
     text-align: center; /* Center the text */
     color: #999; /* Set text color to gray */
   }
+
+.logo-container {
+    margin-right: 50px; /* Adjust margin as needed */
+}
+
+.logo {
+  height: 30px; /* Adjust height as needed */
+  width: auto; /* Maintain aspect ratio */
+}
