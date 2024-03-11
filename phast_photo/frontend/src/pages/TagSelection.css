@@ -1,12 +1,15 @@
+/* TagSelection.css */
 .tag-selection-container {
     text-align: center;
     padding: 20px;
+    margin-top: 60px;
 }
 
 .radio-buttons-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    margin-bottom: 20px; /* Added margin bottom for spacing */
 }
 
 .radio-label {
@@ -16,12 +19,24 @@
 
 .download-button {
     margin-top: 20px;
+    background-color: #007bff; /* Changed button color */
+    color: #fff; /* Changed button text color */
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Added transition effect */
+}
+
+.download-button:hover {
+    background-color: #0056b3; /* Changed button color on hover */
 }
 
 .tag-groups-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: space-around; /* Changed to space-around for better alignment */
+    margin-bottom: 20px; /* Added margin bottom for spacing */
 }
 
 .tag-group {
@@ -37,10 +52,52 @@
     background: #f0f0f0;
     padding: 10px;
     border: 1px solid #ccc; 
+    justify-content: center; /* Center thumbnails horizontally */
 }
   
 .thumbnail-container img {
-    margin-right: 10px;
-    width: 200px;
+    margin: 0 10px; /* Adjusted margin for better spacing */
+    max-width: 200px; /* Changed width to max-width for responsive thumbnails */
+    height: auto; /* Added to maintain aspect ratio */
     object-fit: contain;
 }
+
+.toolbar {
+    background-color: #007bff; /* Blue background color */
+    color: #fff; /* White text color */
+    padding: 10px; /* Adjust padding as needed */
+    font-size: 18px; /* Adjust font size as needed */
+    text-align: center; /* Center-align text */
+    position: fixed; /* Fixed position to stick to the top */
+    width: 100%; /* Full width */
+    z-index: 999; /* Set z-index to ensure it's above other content */
+    top: 0; /* Aligns the toolbar to the top of the viewport */
+}
+
+.toolbar-button {
+    background-color: #007bff; /* Blue background color */
+    color: #fff; /* White text color */
+    padding: 10px 20px; /* Add padding around the button text */
+    border: none; /* Remove button border */
+    border-radius: 5px; /* Add rounded corners */
+    font-size: 16px; /* Adjust font size */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background color and text color change */
+}
+
+.toolbar-button:hover {
+    background-color: #0056b3; /* Darker shade of blue on hover */
+    color: #fff; /* White text color on hover */
+    border: 2px solid #fff; /* Add a white border on hover */
+}
+
+.clear-button {
+    margin-left: 20px; /* Add margin to separate from the upload button */
+}
+
+.upload-placeholder {
+    border: 2px dashed #999; /* Dotted line border */
+    padding: 40px; /* Increase padding for larger box */
+    text-align: center; /* Center the text */
+    color: #999; /* Set text color to gray */
+  }

@@ -260,6 +260,7 @@ function dumbTag({ key, value }) {
 router.post('/downloadPhotos', async (req, res) => {
     try {
         const selectedTags = req.body.selectedTags;
+        const folderName = req.body.folderName; // Add this line to get the folder name from the request body
 
         const tagQueries = selectedTags.map(tag => {
             const [key, value] = tag.split(':');
@@ -292,8 +293,9 @@ router.post('/downloadPhotos', async (req, res) => {
             console.log('Archive wrote %d bytes', archive.pointer());
         });
 
+        // Set the content disposition header with the folder name
         res.setHeader('Content-Type', 'application/zip');
-        res.setHeader('Content-Disposition', 'attachment; filename=selected_photos.zip');
+        res.setHeader('Content-Disposition', `attachment; filename=${folderName}.zip`); // Use folderName variable here
 
         archive.pipe(res);
 
@@ -308,6 +310,7 @@ router.post('/downloadPhotos', async (req, res) => {
         res.status(500).json({ message: 'Error creating and sending zip file', error: error });
     }
 });
+
 
 router.get('/getTags', async (req, res) => {
     try {

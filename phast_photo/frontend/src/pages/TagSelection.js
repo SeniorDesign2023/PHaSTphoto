@@ -5,20 +5,74 @@ function TagSelection() {
   const [tags, setTags] = useState({});
   const [selectedTags, setSelectedTags] = useState([]);
   const [photoPaths, setPhotoPaths] = useState([]);
+  const [folderName, setFolderName] = useState('');
+
+  const handleFileInputChange = async (event) => {
+    const files = event.target.files || event.dataTransfer.files; // Accept files from input or drop
+    if (files.length === 0) {
+      return; // Do nothing if no files are selected
+    }
+  
+    const formData = new FormData();
+    Array.from(files).forEach(file => {
+      formData.append('photos', file);
+    });
+  
+    try {
+      const response = await fetch('http://localhost:4000/upload', { 
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error('File upload failed');
+      }
+  
+      const result = await response.json();
+      console.log('Upload successful', result);
+      fetchTags(); // Refresh tags after upload
+      fetchPhotos(); // Refresh photo paths after upload
+    } catch (error) {
+      console.error('Upload error', error);
+    }
+  };
+
+  const handleToggleUpload = () => {
+    const fileInput = document.getElementById('file-input');
+    if (fileInput) {
+      fileInput.click();
+    }
+  };
+
+  const handleClearPhotos = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/upload', { 
+        method: 'POST',
+        body: new FormData(),
+      });
+  
+      if (!response.ok) {
+        throw new Error('File clear failed');
+      }
+  
+      const result = await response.json();
+      console.log('clear successful', result);
+      fetchTags(); // Refresh tags after upload
+      fetchPhotos(); // Refresh photo paths after upload
+    } catch (error) {
+      console.error('Upload error', error);
+    }
+  };
 
   const fetchTags = async () => {
     try {
       const response = await fetch('http://localhost:4000/getTags');
       if (response.ok) {
         const data = await response.json();
-        
-        // Process the data to split GptGeneratedTags into individual tags and remove duplicates
         const processedTags = { ...data.tags };
         if (processedTags.GptGeneratedTags && processedTags.GptGeneratedTags.length) {
-          // Create a set to remove duplicates, then convert it back to an array
           processedTags.GptGeneratedTags = [...new Set(processedTags.GptGeneratedTags.flat().flatMap(tag => tag.split(',')))];
         }
-  
         setTags(processedTags);
       } else {
         console.error('Error fetching tags:', response.statusText);
@@ -38,10 +92,8 @@ function TagSelection() {
     const isChecked = event.target.checked;
   
     if (isChecked) {
-      // Add the tag to the selectedTags array if it's checked
       setSelectedTags(prevSelectedTags => [...prevSelectedTags, tag]);
     } else {
-      // Remove the tag from the selectedTags array if it's unchecked
       setSelectedTags(prevSelectedTags => prevSelectedTags.filter(t => t !== tag));
     }
   };
@@ -58,7 +110,7 @@ function TagSelection() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ selectedTags }),
+        body: JSON.stringify({ selectedTags, folderName }), // Include folderName in the request body
       });
 
       if (response.ok) {
@@ -66,7 +118,7 @@ function TagSelection() {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = "selected_photos.zip";
+          a.download = `${folderName}.zip`; // Use folderName as the zip file name
           document.body.appendChild(a); 
           a.click();
           a.remove(); 
@@ -94,45 +146,81 @@ function TagSelection() {
     }
   };
 
+  const handleDragOver = (event) => {
+    event.preventDefault(); // Prevent default behavior to enable drop
+  };
+
+  const handleDragEnter = (event) => {
+    event.preventDefault(); // Prevent default behavior to enable drop
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault(); // Prevent default behavior to enable drop
+    handleFileInputChange(event); // Pass the dropped files to handleFileInputChange
+  };
+
   return (
-    <div className="tag-selection-container">
-      <h1>Select Tags</h1>
-      <div className="tag-groups-container">
-        {Object.entries(tags).map(([key, values]) => {
-          // If values is not an array, make it an array
-          if (!Array.isArray(values)) {
-            values = [values];
-          }
-          return (
-            <div key={key} className="tag-group">
-              <h2>{key}</h2>
-              <div className="checkboxes-container">
-                {values.map((value, index) => (
-                  <div key={`${key}:${index}`} className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id={`${key}:${index}`}
-                      name={key}
-                      value={`${key}:${value.trim()}`}
-                      checked={selectedTags.includes(`${key}:${value.trim()}`)}
-                      onChange={handleTagChange}
-                    />
-                    <label htmlFor={`${key}:${index}`}>{value.trim()}</label>
-                  </div>
-                ))}
+    <div>
+      <div className="toolbar">
+        <input id="file-input" type="file" onChange={handleFileInputChange} style={{ display: 'none' }} multiple />
+        <button onClick={handleToggleUpload} className="toolbar-button">Upload Photos</button>
+        <button onClick={handleClearPhotos} className="toolbar-button">Clear Photos</button>
+      </div>
+      <div className="tag-selection-container">
+        <h1>Select Tags</h1>
+        <div className="tag-groups-container">
+          {Object.entries(tags).map(([key, values]) => {
+            if (!Array.isArray(values)) {
+              values = [values];
+            }
+            return (
+              <div key={key} className="tag-group">
+                <h2>{key}</h2>
+                <div className="checkboxes-container">
+                  {values.map((value, index) => (
+                    <div key={`${key}:${index}`} className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        id={`${key}:${index}`}
+                        name={key}
+                        value={`${key}:${value.trim()}`}
+                        checked={selectedTags.includes(`${key}:${value.trim()}`)}
+                        onChange={handleTagChange}
+                      />
+                      <label htmlFor={`${key}:${index}`}>{value.trim()}</label>
+                    </div>
+                  ))}
+                </div>
               </div>
+            );
+          })}
+        </div>
+        <div className="thumbnail-container" onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDrop={handleDrop}>
+          {photoPaths.length === 0 ? (
+            <div className="upload-placeholder">
+              No photos uploaded. Click the "Upload Photos" button or drag and drop photos here to get started.
             </div>
-          );
-        })}
+          ) : (
+            photoPaths.map((photoPath, index) => (
+              <img key={index} src={`http://localhost:4000${photoPath.filePath}`} alt={`${index}`} />
+            ))
+          )}
+        </div>
+        {photoPaths.length > 0 && (
+          <div>
+            <button onClick={handleDownload} className="download-button">
+              Download Photos
+            </button>
+            <input 
+              type="text" 
+              value={folderName} 
+              onChange={(e) => setFolderName(e.target.value)} 
+              placeholder="Enter folder name"
+              style={{ marginTop: '10px', padding: '5px' }} // Add some styling
+            />
+          </div>
+        )}
       </div>
-      <div className="thumbnail-container">
-        {photoPaths.map((photoPath, index) => (
-          <img key={index} src={`http://localhost:4000${photoPath.filePath}`} alt={`${index}`} />
-        ))}
-      </div>
-      <button onClick={handleDownload} className="download-button">
-        Download Photos
-      </button>
     </div>
   );
 }
