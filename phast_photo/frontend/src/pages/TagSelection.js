@@ -168,53 +168,49 @@ function TagSelection() {
         <button onClick={handleClearPhotos} className="toolbar-button">Clear Photos</button>
       </div>
       <div className="logo-container">
-        <img src="/logo192.png" alt="Logo" className="logo" />
+        <img src="/logo192.png" alt="Logo" className="logo"/>
       </div>
     </div>
-    <div className="main-container">
-      <div className="tag-selection-container">
-        <h1>Select Tags</h1>
-        <div className="tag-groups-container">
-          {Object.entries(tags).map(([key, values]) => {
-            if (!Array.isArray(values)) {
-              values = [values];
-            }
-            return (
-              <div key={key} className="tag-group">
-                <h2>{key}</h2>
-                <div className="checkboxes-container">
-                  {values.map((value, index) => (
-                    <div key={`${key}:${index}`} className="checkbox-label">
-                      <input
-                        type="checkbox"
-                        id={`${key}:${index}`}
-                        name={key}
-                        value={`${key}:${value.trim()}`}
-                        checked={selectedTags.includes(`${key}:${value.trim()}`)}
-                        onChange={handleTagChange}
-                      />
-                      <label htmlFor={`${key}:${index}`}>{value.trim()}</label>
-                    </div>
-                  ))}
+    {photoPaths.length > 0 ? (
+      <>
+      <div className="main-container">
+        <div className="tag-selection-container">
+          <h1>Select Tags</h1>
+          <div className="tag-groups-container">
+            {Object.entries(tags).map(([key, values]) => {
+              if (!Array.isArray(values)) {
+                values = [values];
+              }
+              return (
+                <div key={key} className="tag-group">
+                  <h2>{key}</h2>
+                  <div className="checkboxes-container">
+                    {values.map((value, index) => (
+                      <div key={`${key}:${index}`} className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id={`${key}:${index}`}
+                          name={key}
+                          value={`${key}:${value.trim()}`}
+                          checked={selectedTags.includes(`${key}:${value.trim()}`)}
+                          onChange={handleTagChange}
+                        />
+                        <label htmlFor={`${key}:${index}`}>{value.trim()}</label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
-        <div className="thumbnail-container" onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDrop={handleDrop}>
-          {photoPaths.length === 0 ? (
-            <div className="upload-placeholder">
-              No photos uploaded. Click the "Upload Photos" button or drag and drop photos here to get started.
-            </div>
-          ) : (
-            photoPaths.map((photoPath, index) => (
-              <img key={index} src={`http://localhost:4000${photoPath.filePath}`} alt={`${index}`} />
-            ))
-          )}
+          <div className="thumbnail-container" onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDrop={handleDrop}>
+            {photoPaths.map((photoPath, index) => (
+                <img key={index} src={`http://localhost:4000${photoPath.filePath}`} alt={`${index}`} />
+              ))
+            }
+          </div>
         </div>
-      </div>
-        {photoPaths.length > 0 && (
           <footer className="download-footer">
             <button onClick={handleDownload} className="download-button">
               Download Photos
@@ -227,6 +223,12 @@ function TagSelection() {
               style={{ padding: '5px' }} // Add some styling
             />
           </footer>
+        </>
+      ) : (
+        // This is also clickable now.
+        <label htmlFor="file-input" className="upload-placeholder">
+          No photos uploaded. Click the "Upload Photos" button or drag and drop photos here to get started.
+        </label>
         )}
     </div>
   );
