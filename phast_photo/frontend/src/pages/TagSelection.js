@@ -160,7 +160,7 @@ function TagSelection() {
   };
 
   return (
-    <div>
+    <div className="app-container">
     <div className="toolbar">
       <div className="button-container">
         <input id="file-input" type="file" onChange={handleFileInputChange} style={{ display: 'none' }} multiple />
@@ -171,6 +171,7 @@ function TagSelection() {
         <img src="/logo192.png" alt="Logo" className="logo" />
       </div>
     </div>
+    <div className="main-container">
       <div className="tag-selection-container">
         <h1>Select Tags</h1>
         <div className="tag-groups-container">
@@ -200,6 +201,7 @@ function TagSelection() {
             );
           })}
         </div>
+      </div>
         <div className="thumbnail-container" onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDrop={handleDrop}>
           {photoPaths.length === 0 ? (
             <div className="upload-placeholder">
@@ -211,8 +213,9 @@ function TagSelection() {
             ))
           )}
         </div>
+      </div>
         {photoPaths.length > 0 && (
-          <div>
+          <footer className="download-footer">
             <button onClick={handleDownload} className="download-button">
               Download Photos
             </button>
@@ -221,11 +224,10 @@ function TagSelection() {
               value={folderName} 
               onChange={(e) => setFolderName(e.target.value)} 
               placeholder="Enter folder name"
-              style={{ marginTop: '10px', padding: '5px' }} // Add some styling
+              style={{ padding: '5px' }} // Add some styling
             />
-          </div>
+          </footer>
         )}
-      </div>
     </div>
   );
 }

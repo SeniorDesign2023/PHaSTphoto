@@ -1,65 +1,10 @@
 /* TagSelection.css */
-.tag-selection-container {
-    text-align: center;
-    padding: 20px;
-    margin-top: 60px;
-}
 
-.radio-buttons-container {
+.app-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 20px; /* Added margin bottom for spacing */
-}
-
-.radio-label {
-    display: inline-block;
-    margin: 5px;
-}
-
-.download-button {
-    margin-top: 20px;
-    background-color: #007bff; /* Changed button color */
-    color: #fff; /* Changed button text color */
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease; /* Added transition effect */
-}
-
-.download-button:hover {
-    background-color: #0056b3; /* Changed button color on hover */
-}
-
-.tag-groups-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around; /* Changed to space-around for better alignment */
-    margin-bottom: 20px; /* Added margin bottom for spacing */
-}
-
-.tag-group {
-    border: 1px solid #000000;
-    padding: 10px; 
-    margin: 10px; 
-}
-
-.thumbnail-container {
-    display: flex;
-    overflow-x: auto;
-    white-space: nowrap;
-    background: #f0f0f0;
-    padding: 10px;
-    border: 1px solid #ccc; 
-    justify-content: center; /* Center thumbnails horizontally */
-}
-  
-.thumbnail-container img {
-    margin: 0 10px; /* Adjusted margin for better spacing */
-    max-width: 200px; /* Changed width to max-width for responsive thumbnails */
-    height: auto; /* Added to maintain aspect ratio */
-    object-fit: contain;
+    flex-direction: column;
+    height: 100vh;
+    overflow-x: hidden;
 }
 
 .toolbar {
@@ -71,7 +16,6 @@
     padding: 10px; /* Adjust padding as needed */
     font-size: 18px; /* Adjust font size as needed */
     text-align: center; /* Center-align text */
-    position: fixed; /* Fixed position to stick to the top */
     width: 100%; /* Full width */
     z-index: 999; /* Set z-index to ensure it's above other content */
     top: 0; /* Aligns the toolbar to the top of the viewport */
@@ -81,7 +25,7 @@
     background-color: #007bff; /* Blue background color */
     color: #fff; /* White text color */
     padding: 10px 20px; /* Add padding around the button text */
-    border: none; /* Remove button border */
+    border: 2px solid transparent; /* Add a transparent border so hovering doesn't change toolbar size */
     border-radius: 5px; /* Add rounded corners */
     font-size: 16px; /* Adjust font size */
     cursor: pointer; /* Change cursor to pointer on hover */
@@ -94,6 +38,86 @@
     border: 2px solid #fff; /* Add a white border on hover */
 }
 
+.main-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    overflow: hidden;
+}
+
+.tag-selection-container {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    
+    width: 30%;
+    overflow-y: auto; /* Make the column scrollable vertically */
+    border-right: 1px solid #ccc; /* Add a border to the right of the column */
+    
+    height: 100%;
+    
+}
+
+.tag-groups-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;  /*  Changed to space-around for better alignment */
+    /* margin-bottom: 20px; */
+}
+
+.tag-group {
+    border: 1px solid #000000;
+    padding: 10px; 
+    margin: 10px; 
+}
+
+.download-button {
+    background-color: #007bff; /* Changed button color */
+    color: #fff; /* Changed button text color */
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Added transition effect */
+    align-self: center; /* Center-align button */
+    box-sizing: border-box;
+}
+
+.download-button:hover {
+    background-color: #0056b3; /* Changed button color on hover */
+}
+
+.download-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    background-color: #dbdbdb;
+    width: 100%;
+    height: 50px;
+    bottom: 0;
+    padding: 10px;
+}
+
+.thumbnail-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 70%;
+    overflow-y: auto;
+    background: #f0f0f0;
+    border: 1px solid #ccc; 
+    height: 100%;
+}
+  
+.thumbnail-container img {
+    margin: 10px 10px; /* Adjusted margin for better spacing */
+    max-width: 200px; /* Changed width to max-width for responsive thumbnails */
+    height: auto; /* Added to maintain aspect ratio */
+    object-fit: contain;
+}
+
+
+
 .clear-button {
     margin-left: 20px; /* Add margin to separate from the upload button */
 }
@@ -103,7 +127,7 @@
     padding: 40px; /* Increase padding for larger box */
     text-align: center; /* Center the text */
     color: #999; /* Set text color to gray */
-  }
+}
 
 .logo-container {
     margin-right: 50px; /* Adjust margin as needed */
