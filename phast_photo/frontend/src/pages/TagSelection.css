@@ -42,6 +42,7 @@
     display: flex;
     flex-direction: row;
     width: 100%;
+    flex-grow: 1;
     overflow: hidden;
 }
 
@@ -49,13 +50,10 @@
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    
     width: 30%;
     overflow-y: auto; /* Make the column scrollable vertically */
     border-right: 1px solid #ccc; /* Add a border to the right of the column */
-    
     height: 100%;
-    
 }
 
 .tag-groups-container {
@@ -97,6 +95,7 @@
     height: 50px;
     bottom: 0;
     padding: 10px;
+    position: static;
 }
 
 .thumbnail-container {
@@ -107,26 +106,31 @@
     background: #f0f0f0;
     border: 1px solid #ccc; 
     height: 100%;
+    align-items: flex-start;
 }
   
 .thumbnail-container img {
-    margin: 10px 10px; /* Adjusted margin for better spacing */
-    max-width: 200px; /* Changed width to max-width for responsive thumbnails */
-    height: auto; /* Added to maintain aspect ratio */
+    margin: 10px 10px; 
+    max-width: 200px; 
+    height: auto;
     object-fit: contain;
 }
-
-
 
 .clear-button {
     margin-left: 20px; /* Add margin to separate from the upload button */
 }
 
 .upload-placeholder {
-    border: 2px dashed #999; /* Dotted line border */
+    border: 2px dashed #777777; /* Dotted line border */
     padding: 40px; /* Increase padding for larger box */
     text-align: center; /* Center the text */
-    color: #999; /* Set text color to gray */
+    color: #777777; /* Set text color to gray */
+    background-color: #eeeeee;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centers the element */
+    cursor: pointer;
 }
 
 .logo-container {
