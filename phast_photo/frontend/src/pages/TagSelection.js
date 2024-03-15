@@ -6,6 +6,7 @@ function TagSelection() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [photoPaths, setPhotoPaths] = useState([]);
   const [folderName, setFolderName] = useState('');
+  const [displayFilter, setDisplayFilter] = useState([]);
 
   const handleFileInputChange = async (event) => {
     const files = event.target.files || event.dataTransfer.files; // Accept files from input or drop
@@ -86,16 +87,28 @@ function TagSelection() {
     fetchTags();
     fetchPhotos();
   }, []);
+  
+
+  
 
   const handleTagChange = (event) => {
     const tag = event.target.value;
     const isChecked = event.target.checked;
   
-    if (isChecked) {
-      setSelectedTags(prevSelectedTags => [...prevSelectedTags, tag]);
-    } else {
-      setSelectedTags(prevSelectedTags => prevSelectedTags.filter(t => t !== tag));
-    }
+    setSelectedTags(oldTags => {
+      if (isChecked) {
+        return [...oldTags, tag];
+      } else {
+        return oldTags.filter(t => t !== tag);
+      }
+    });
+  
+  
+    const filteredPhotos = photoPaths.filter(path =>
+      path.tags && path.tags.includes && selectedTags.some(selectedTag => path.tags.includes(selectedTag))
+    );
+    setDisplayFilter(filteredPhotos);
+    console.log('Display Filter:', filteredPhotos);
   };
 
   const handleDownload = async () => {
@@ -145,6 +158,12 @@ function TagSelection() {
       console.error('Error fetching photos:', error);
     }
   };
+
+
+  useEffect(() => {
+    setDisplayFilter(photoPaths);
+  }, [photoPaths]);
+
 
   const handleDragOver = (event) => {
     event.preventDefault(); // Prevent default behavior to enable drop
@@ -205,8 +224,8 @@ function TagSelection() {
           </div>
         </div>
           <div className="thumbnail-container" onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDrop={handleDrop}>
-            {photoPaths.map((photoPath, index) => (
-                <img key={index} src={`http://localhost:4000${photoPath.filePath}`} alt={`${index}`} />
+            {displayFilter.map((filteredPhotos, index) => (
+                <img key={index} src={`http://localhost:4000${filteredPhotos.filePath}`} alt={`${index}`} />
               ))
             }
           </div>
