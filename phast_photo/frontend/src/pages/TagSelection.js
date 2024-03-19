@@ -60,6 +60,7 @@ function TagSelection() {
       console.log('clear successful', result);
       fetchTags(); // Refresh tags after upload
       fetchPhotos(); // Refresh photo paths after upload
+      
     } catch (error) {
       console.error('Upload error', error);
     }
@@ -94,21 +95,26 @@ function TagSelection() {
   const handleTagChange = (event) => {
     const tag = event.target.value;
     const isChecked = event.target.checked;
-  
+    console.log("Checkbox clicked: ", tag, isChecked); 
+
     setSelectedTags((prevSelectedTags) => {
       if (isChecked) {
         return [...prevSelectedTags, tag];
       } else {
         return prevSelectedTags.filter((selectedTag) => selectedTag !== tag);
       }
+      
     });
   };
   
   useEffect(() => {
     const filteredPhotos = photoPaths.filter((path) =>
-      path.tags && path.tags.some((tag) => selectedTags.includes(tag))
+      path.tags && selectedTags.every((tag) => path.tags.includes(tag))
     );
     setDisplayFilter(filteredPhotos);
+    selectedTags.forEach(function(element){console.log(element)});
+    // fetchTags();
+    // fetchPhotos();
   }, [selectedTags, photoPaths]);
 
   const handleDownload = async () => {
