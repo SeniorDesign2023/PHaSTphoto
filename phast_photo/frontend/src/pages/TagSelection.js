@@ -95,21 +95,21 @@ function TagSelection() {
     const tag = event.target.value;
     const isChecked = event.target.checked;
   
-    setSelectedTags(oldTags => {
+    setSelectedTags((prevSelectedTags) => {
       if (isChecked) {
-        return [...oldTags, tag];
+        return [...prevSelectedTags, tag];
       } else {
-        return oldTags.filter(t => t !== tag);
+        return prevSelectedTags.filter((selectedTag) => selectedTag !== tag);
       }
     });
+  };
   
-  
-    const filteredPhotos = photoPaths.filter(path =>
-      path.tags && path.tags.includes && selectedTags.some(selectedTag => path.tags.includes(selectedTag))
+  useEffect(() => {
+    const filteredPhotos = photoPaths.filter((path) =>
+      path.tags && path.tags.some((tag) => selectedTags.includes(tag))
     );
     setDisplayFilter(filteredPhotos);
-    console.log('Display Filter:', filteredPhotos);
-  };
+  }, [selectedTags, photoPaths]);
 
   const handleDownload = async () => {
     if (selectedTags.length === 0) {
