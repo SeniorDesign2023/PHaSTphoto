@@ -87,16 +87,31 @@ function TagSelection() {
     fetchPhotos();
   }, []);
 
+  // const handleTagChange = (event) => {
+  //   const tag = event.target.value;
+  //   const isChecked = event.target.checked;
+  
+  //   if (isChecked) {
+  //     setSelectedTags(prevSelectedTags => [...prevSelectedTags, tag]);
+  //   } else {
+  //     setSelectedTags(prevSelectedTags => prevSelectedTags.filter(t => t !== tag));
+  //   }
+  // };
   const handleTagChange = (event) => {
     const tag = event.target.value;
     const isChecked = event.target.checked;
-  
-    if (isChecked) {
-      setSelectedTags(prevSelectedTags => [...prevSelectedTags, tag]);
-    } else {
-      setSelectedTags(prevSelectedTags => prevSelectedTags.filter(t => t !== tag));
-    }
+    console.log("Checkbox clicked: ", tag, isChecked); 
+
+    setSelectedTags((prevSelectedTags) => {
+      if (isChecked) {
+        return [...prevSelectedTags, tag];
+      } else {
+        return prevSelectedTags.filter((selectedTag) => selectedTag !== tag);
+      }
+      
+    });
   };
+
   // const handleTagChange = (event) => {
   //   const tag = event.target.value;
   //   const isChecked = event.target.checked;
@@ -122,6 +137,18 @@ function TagSelection() {
   //   selectedTags.forEach(function(element){console.log(element)});
 
   // }, [selectedTags, photoPaths]);
+
+  
+  useEffect(() => {
+    const filteredPhotos = photoPaths.filter((path) =>
+      path.tags && selectedTags.every((tag) => path.tags.includes(tag))
+    );
+    // change filteredPhotos to be a function call that takes in our selected tags,
+    // queries the database for photos with those tags, and returns said photos
+    setPhotoPaths(filteredPhotos);
+    selectedTags.forEach(function(element){console.log(element)});
+
+  }, [selectedTags, photoPaths]);
 
 ////////////////////////////////////// new ver ^^^
 
