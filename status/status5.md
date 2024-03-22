@@ -41,6 +41,7 @@
 - Finish implementing the live update feature on the display.
 - Work in an option for users to input a chat gpt api key in order to use GPT generated tags. We are thinking this will take the form of a slider to turn the function on as well as display an input box.
 - We still need to film our infomercial.
+- Further improvements could include adding the option to select from multiple different tagging services, increasing the speed of the tagging process, allowing for connections to external photo storage locations, or improving the customizability of tags. 
 ## Confidence on completion from each team member + team average [5 pts]
 Scale of 1-5; 1 = not-confident; 3 = toss-up; 5 = confident
 - Buck- 5
