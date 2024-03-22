@@ -87,44 +87,43 @@ function TagSelection() {
     fetchPhotos();
   }, []);
 
-  const handleTagChange = (event) => {
-    const tag = event.target.value;
-    const isChecked = event.target.checked;
-  
-    if (isChecked) {
-      setSelectedTags(prevSelectedTags => [...prevSelectedTags, tag]);
-    } else {
-      setSelectedTags(prevSelectedTags => prevSelectedTags.filter(t => t !== tag));
-    }
-  };
-
   // const handleTagChange = (event) => {
   //   const tag = event.target.value;
   //   const isChecked = event.target.checked;
-  //   console.log("Checkbox clicked: ", tag, isChecked); 
-
-  //   setSelectedTags((prevSelectedTags) => {
-  //     if (isChecked) {
-  //       return [...prevSelectedTags, tag];
-  //     } else {
-  //       return prevSelectedTags.filter((selectedTag) => selectedTag !== tag);
-  //     }
-      
-  //   });
-  // };
   
-  // useEffect(() => {
-  //   const filteredPhotos = photoPaths.filter((path) =>
-  //     path.tags && selectedTags.every((tag) => path.tags.includes(tag))
-  //   );
-  //   // change filteredPhotos to be a function call that takes in our selected tags,
-  //   // queries the database for photos with those tags, and returns said photos
-  //   setPhotoPaths(filteredPhotos);
-  //   selectedTags.forEach(function(element){console.log(element)});
+  //   if (isChecked) {
+  //     setSelectedTags(prevSelectedTags => [...prevSelectedTags, tag]);
+  //   } else {
+  //     setSelectedTags(prevSelectedTags => prevSelectedTags.filter(t => t !== tag));
+  //   }
+  // };
+  const handleTagChange = (event) => {
+    const tag = event.target.value;
+    const isChecked = event.target.checked;
+    console.log("Checkbox clicked: ", tag, isChecked); 
 
-  // }, [selectedTags, photoPaths]);
+    setSelectedTags((prevSelectedTags) => {
+      if (isChecked) {
+        return [...prevSelectedTags, tag];
+      } else {
+        return prevSelectedTags.filter((selectedTag) => selectedTag !== tag);
+      }
+      
+    });
+  };
+  
+  useEffect(() => {
+    const filteredPhotos = 
+    // change filteredPhotos to be a function call that takes in our selected tags,
+    // queries the database for photos with those tags, and returns said photos
+    setPhotoPaths(filteredPhotos);
+    selectedTags.forEach(function(element){console.log(element)});
+
+  }, [selectedTags, photoPaths]);
 
 ////////////////////////////////////// new ver ^^^
+
+
 
 
   const handleDownload = async () => {
@@ -233,7 +232,7 @@ function TagSelection() {
             })}
           </div>
         </div>
-          <div className="thumbnail-container" >
+          <div className="thumbnail-container" onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDrop={handleDrop}>
             {photoPaths.map((photoPath, index) => (
                 <img key={index} src={`http://localhost:4000${photoPath.filePath}`} alt={`${index}`} />
               ))
@@ -244,24 +243,20 @@ function TagSelection() {
             <button onClick={handleDownload} className="download-button">
               Download Photos
             </button>
-            <input className='folder-name-input'
+            <input 
               type="text" 
               value={folderName} 
               onChange={(e) => setFolderName(e.target.value)} 
               placeholder="Enter folder name"
+              style={{ padding: '5px' }} // Add some styling
             />
           </footer>
         </>
       ) : (
-        <div className="upload-placeholder">
-          {/* <h1 className="title">Your Title Here</h1> */}
-          <img src="/logo192.png" alt="Main Logo" className="upload-logo"/>
-          
-          <label htmlFor="file-input" className="upload-box" onDragOver={handleDragOver} onDragEnter={handleDragEnter} 
-          onDrop={handleDrop}>
-            No photos uploaded. Click the "Upload Photos" button or drag and drop photos here to get started.
-          </label>
-        </div>
+        // This is also clickable now.
+        <label htmlFor="file-input" className="upload-placeholder">
+          No photos uploaded. Click the "Upload Photos" button or drag and drop photos here to get started.
+        </label>
         )}
     </div>
   );

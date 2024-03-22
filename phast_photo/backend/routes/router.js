@@ -32,6 +32,7 @@ function clearTempDirectory(directory) {
     }
 }
 
+
 const clearTempMiddleware = (req, res, next) => {
     clearTempDirectory(path.join(__dirname, '..', 'temp'));
     next();
@@ -251,7 +252,8 @@ function dumbTag({ key, value }) {
         'GPSDestBearing', 'SubSecTimeOriginal', 'SubSecTimeDigitized', 'SubjectArea',
         'SensitivityType', 'GPSLongitudeRef', 'GPSLatitudeRef', 'S', 'LensInfo',
         'LensSerialNumber', 'ExposureCompensation', 'SubjectDistanceRange',
-        'FocalLengthIn35mmFormat', 'FNumber', 'GPSAltitude', 'GPSDestBearingRef'
+        'FocalLengthIn35mmFormat', 'FNumber', 'GPSAltitude', 'GPSDestBearingRef', 'YCbCrPositioning',
+        'ExifImageWidth', 'ExifImageHeight', 'ImageUniqueID'
     ];
 
     return ignoredTags.includes(key);
@@ -360,5 +362,13 @@ router.get('/listPhotoPaths', (req, res) => {
       }
     });
 });
+
+
+function pathSieve(tagSet){
+    var validDisplay=[]
+
+    
+}
+
 
 module.exports = router;
