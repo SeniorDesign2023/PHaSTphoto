@@ -113,7 +113,7 @@ function TagSelection() {
   };
   
   useEffect(() => {
-    if(selectedTags.length>0){
+    if(selectedTags&&selectedTags.length>0){
       updateDisplay();
     }
     else{
@@ -137,7 +137,7 @@ function TagSelection() {
       });
       if (newDisp.ok) {
         const data = await newDisp.json();
-        setPhotoPaths(data.photoData);
+        setPhotoPaths(data.validDisplay);
       } else {
         console.error('Error updating display:', newDisp.statusText);
       }
@@ -220,7 +220,7 @@ function TagSelection() {
         <img src="/logo192.png" alt="Logo" className="logo"/>
       </div>
     </div>
-    {photoPaths.length > 0 ? (
+    {photoPaths&&photoPaths.length > 0 ? (
       <>
       <div className="main-container">
         <div className="tag-selection-container">
