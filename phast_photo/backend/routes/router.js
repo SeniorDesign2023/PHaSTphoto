@@ -287,7 +287,7 @@ router.post('/photoSieve', async (req, res) => {
             const filePath = path.join(__dirname, '..', photo.filePath);
             validDisplay.push(filePath);
         });
-        res.json({validDisplay});
+        res.json({photoData: validDisplay});
 
     } catch (error) {
         console.error('Error updating display:', error);

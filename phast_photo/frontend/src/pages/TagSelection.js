@@ -115,6 +115,7 @@ function TagSelection() {
   useEffect(() => {
     if(selectedTags&&selectedTags.length>0){
       updateDisplay();
+      photoPaths.forEach(function(element){console.log(element)});
     }
     else{
       fetchPhotos();
@@ -137,7 +138,9 @@ function TagSelection() {
       });
       if (newDisp.ok) {
         const data = await newDisp.json();
-        setPhotoPaths(data.validDisplay);
+
+        setPhotoPaths(data.photoData);
+        
       } else {
         console.error('Error updating display:', newDisp.statusText);
       }
