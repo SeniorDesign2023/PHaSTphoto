@@ -258,7 +258,41 @@ function dumbTag({ key, value }) {
 
     return ignoredTags.includes(key);
 }
+router.post('/photoSieve', async (req, res) => {
+    try {
+        const selectedTags = req.body.selectedTags;
 
+        const tagQueries = selectedTags.map(tag => {
+            const [key, value] = tag.split(':');
+            if (key === 'GptGeneratedTags') {
+                // Use $in to match any of the tags in the array
+                return { [`metadata.tags.${key}`]: { $in: [value] } };
+            } else {
+                const parsedValue = isNaN(Number(value)) ? value : Number(value);
+                return { [`metadata.tags.${key}`]: parsedValue };
+            }
+        });
+
+        const query = { $and: tagQueries };
+
+        const photos = await Photo.find(query);
+
+        if (photos.length === 0) {
+            return res.status(404).json({ message: 'No photos found with the selected tags' });
+        }
+
+
+        var validDisplay=[];
+        photos.forEach(photo => {
+            const filePath = path.join(__dirname, '..', photo.filePath);
+            validDisplay.push(filePath);
+        });
+        res.json({validDisplay});
+
+    } catch (error) {
+        console.error('Error updating display:', error);
+    }
+});
 router.post('/downloadPhotos', async (req, res) => {
     try {
         const selectedTags = req.body.selectedTags;
@@ -295,7 +329,6 @@ router.post('/downloadPhotos', async (req, res) => {
             console.log('Archive wrote %d bytes', archive.pointer());
         });
 
-        // Set the content disposition header with the folder name
         res.setHeader('Content-Type', 'application/zip');
         res.setHeader('Content-Disposition', `attachment; filename=${folderName}.zip`); // Use folderName variable here
 
@@ -344,6 +377,9 @@ router.get('/getTags', async (req, res) => {
     }
 });
 
+
+
+
 router.use('/getPhotos', express.static(path.join(__dirname, '..', 'temp')));
 
 router.get('/listPhotoPaths', (req, res) => {
@@ -364,26 +400,7 @@ router.get('/listPhotoPaths', (req, res) => {
 });
 
 
-async function pathSieve(tagSet) {
-    try {
-        const sieve = {
-            'metadata.tags': {
-                $elemMatch: {
-                    $in: Array.from(tagSet)
-                }
-            }
-        };
 
-        const photos = await Photo.find(sieve);
-        return photos.map(photo => ({
-            filename: path.basename(photo.filePath),
-            filePath: `/getPhotos/${path.basename(photo.filePath)}`
-        }));
-    } catch (error) {
-        console.error('Error retrieving photos from database:', error);
-        throw error;
-    }
-}
 
 
 module.exports = router;

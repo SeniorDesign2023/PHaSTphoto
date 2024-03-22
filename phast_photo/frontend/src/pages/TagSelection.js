@@ -113,7 +113,7 @@ function TagSelection() {
   };
   
   useEffect(() => {
-    const filteredPhotos = 
+    const filteredPhotos = pathSieve(selectedTags)
     // change filteredPhotos to be a function call that takes in our selected tags,
     // queries the database for photos with those tags, and returns said photos
     setPhotoPaths(filteredPhotos);
