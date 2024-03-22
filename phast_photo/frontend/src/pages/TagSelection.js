@@ -113,17 +113,38 @@ function TagSelection() {
   };
   
   useEffect(() => {
-    const filteredPhotos = pathSieve(selectedTags)
-    // change filteredPhotos to be a function call that takes in our selected tags,
-    // queries the database for photos with those tags, and returns said photos
-    setPhotoPaths(filteredPhotos);
+    if(selectedTags.length>0){
+      updateDisplay();
+    }
+    else{
+      fetchPhotos();
+    }
+    
     selectedTags.forEach(function(element){console.log(element)});
 
-  }, [selectedTags, photoPaths]);
+  }, [selectedTags]);
 
 ////////////////////////////////////// new ver ^^^
 
-
+  const updateDisplay = async () => {
+    try {
+      const newDisp = await fetch('http://localhost:4000/photoSieve',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ selectedTags}),
+      });
+      if (newDisp.ok) {
+        const data = await newDisp.json();
+        setPhotoPaths(data.photoData);
+      } else {
+        console.error('Error updating display:', newDisp.statusText);
+      }
+    } catch (error) {
+      console.error('Error updating display:', error);
+    }
+  }
 
 
   const handleDownload = async () => {
