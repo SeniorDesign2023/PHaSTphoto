@@ -364,10 +364,25 @@ router.get('/listPhotoPaths', (req, res) => {
 });
 
 
-function pathSieve(tagSet){
-    var validDisplay=[]
+async function pathSieve(tagSet) {
+    try {
+        const sieve = {
+            'metadata.tags': {
+                $elemMatch: {
+                    $in: Array.from(tagSet)
+                }
+            }
+        };
 
-    
+        const photos = await Photo.find(sieve);
+        return photos.map(photo => ({
+            filename: path.basename(photo.filePath),
+            filePath: `/getPhotos/${path.basename(photo.filePath)}`
+        }));
+    } catch (error) {
+        console.error('Error retrieving photos from database:', error);
+        throw error;
+    }
 }
 
 
