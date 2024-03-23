@@ -277,9 +277,7 @@ router.post('/photoSieve', async (req, res) => {
 
         const photos = await Photo.find(query);
 
-        if (photos.length === 0) {
-            return res.status(404).json({ message: 'No photos found with the selected tags' });
-        }
+       
 
         
         var validDisplay=photos.map(photo => {
@@ -394,7 +392,7 @@ router.get('/listPhotoPaths', (req, res) => {
           filename,
           filePath: `/getPhotos/${filename}`
         }));
-        console.log(photoData[0].filePath);
+        //console.log(photoData[0].filePath);
         res.json({ photoData });
       }
     });

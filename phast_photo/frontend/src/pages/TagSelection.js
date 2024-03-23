@@ -91,7 +91,7 @@ function TagSelection() {
   const handleTagChange = (event) => {
     const tag = event.target.value;
     const isChecked = event.target.checked;
-    console.log("Checkbox clicked: ", tag, isChecked); 
+    //console.log("Checkbox clicked: ", tag, isChecked); 
 
     setSelectedTags((prevSelectedTags) => {
       if (isChecked) {
@@ -106,7 +106,7 @@ function TagSelection() {
   useEffect(() => {
     if(selectedTags&&selectedTags.length>0){
       updateDisplay();
-      photoPaths.forEach(function(element){console.log(element)});
+      //photoPaths.forEach(function(element){console.log(element)});
     }
     else{
       fetchPhotos();
@@ -129,9 +129,7 @@ function TagSelection() {
       });
       if (newDisp.ok) {
         const data = await newDisp.json();
-
         setPhotoPaths(data.photoData);
-        
       } else {
         console.error('Error updating display:', newDisp.statusText);
       }
