@@ -281,12 +281,15 @@ router.post('/photoSieve', async (req, res) => {
             return res.status(404).json({ message: 'No photos found with the selected tags' });
         }
 
+        
+        var validDisplay=photos.map(photo => {
+            const fileName=path.parse(photo.filePath).base;
+            return{
+                fileName,
+                filePath: `/getPhotos/${fileName}`};
+            
+          });
 
-        var validDisplay=[];
-        photos.forEach(photo => {
-            const filePath = path.join(__dirname, '..', photo.filePath);
-            validDisplay.push(filePath);
-        });
         res.json({photoData: validDisplay});
 
     } catch (error) {
@@ -377,9 +380,6 @@ router.get('/getTags', async (req, res) => {
     }
 });
 
-
-
-
 router.use('/getPhotos', express.static(path.join(__dirname, '..', 'temp')));
 
 router.get('/listPhotoPaths', (req, res) => {
@@ -394,6 +394,7 @@ router.get('/listPhotoPaths', (req, res) => {
           filename,
           filePath: `/getPhotos/${filename}`
         }));
+        console.log(photoData[0].filePath);
         res.json({ photoData });
       }
     });

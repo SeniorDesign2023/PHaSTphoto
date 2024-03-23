@@ -87,16 +87,7 @@ function TagSelection() {
     fetchPhotos();
   }, []);
 
-  // const handleTagChange = (event) => {
-  //   const tag = event.target.value;
-  //   const isChecked = event.target.checked;
-  
-  //   if (isChecked) {
-  //     setSelectedTags(prevSelectedTags => [...prevSelectedTags, tag]);
-  //   } else {
-  //     setSelectedTags(prevSelectedTags => prevSelectedTags.filter(t => t !== tag));
-  //   }
-  // };
+
   const handleTagChange = (event) => {
     const tag = event.target.value;
     const isChecked = event.target.checked;
