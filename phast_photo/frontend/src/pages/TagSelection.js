@@ -6,6 +6,7 @@ function TagSelection() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [photoPaths, setPhotoPaths] = useState([]);
   const [folderName, setFolderName] = useState('');
+  const [Uploaded, setUploaded] = useState(false);
 
   const handleFileInputChange = async (event) => {
     const files = event.target.files || event.dataTransfer.files; // Accept files from input or drop
@@ -30,6 +31,7 @@ function TagSelection() {
   
       const result = await response.json();
       console.log('Upload successful', result);
+      setUploaded(true);
       fetchTags(); // Refresh tags after upload
       fetchPhotos(); // Refresh photo paths after upload
     } catch (error) {
@@ -41,6 +43,7 @@ function TagSelection() {
     const fileInput = document.getElementById('file-input');
     if (fileInput) {
       fileInput.click();
+      
     }
   };
 
@@ -59,6 +62,7 @@ function TagSelection() {
       console.log('clear successful', result);
       fetchTags(); // Refresh tags after upload
       fetchPhotos(); // Refresh photo paths after upload
+      setUploaded(false);
     } catch (error) {
       console.error('Upload error', error);
     }
@@ -212,7 +216,7 @@ function TagSelection() {
         <img src="/logo192.png" alt="Logo" className="logo"/>
       </div>
     </div>
-    {photoPaths&&photoPaths.length > 0 ? (
+    {Uploaded ? (
       <>
       <div className="main-container">
         <div className="tag-selection-container">
