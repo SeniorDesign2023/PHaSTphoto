@@ -9,6 +9,9 @@ const path = require('path');
 const router = express.Router();
 const axios = require('axios');
 const api_key = process.env.OPENAI_API_KEY;
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const storage = multer.diskStorage({
     destination: 'temp/',
@@ -31,7 +34,6 @@ function clearTempDirectory(directory) {
         });
     }
 }
-
 
 const clearTempMiddleware = (req, res, next) => {
     clearTempDirectory(path.join(__dirname, '..', 'temp'));
@@ -87,6 +89,8 @@ async function getTagsFromOpenAI(imagePath) {
 }
 
 router.post('/upload', clearTempMiddleware, (req, res) => {
+    const aiTagsEnabled = req.query.aiTagsEnabled === "true";
+
     upload.array('photos')(req, res, async (err) => {
         if (err) {
             return res.status(500).json({ message: 'Error uploading files', error: err });
@@ -103,12 +107,9 @@ router.post('/upload', clearTempMiddleware, (req, res) => {
                 metadata = parser.parse();
                 alterAndCleanMetadata(metadata);
 
-                if(api_key)
-                {
+                if (aiTagsEnabled && api_key) { 
                     const openAITagsString = await getTagsFromOpenAI(file.path);
-
                     const openAITagsArray = openAITagsString.split(', ').map(tag => tag.trim());
-    
                     metadata.tags['GptGeneratedTags'] = openAITagsArray;
                 }
                 
@@ -128,6 +129,7 @@ router.post('/upload', clearTempMiddleware, (req, res) => {
         res.status(200).json({ message: 'Files uploaded and saved to database successfully', data: imageInfoArray });
     });
 });
+
 
 function alterAndCleanMetadata(metadata) {
     Object.keys(metadata.tags).forEach(key => {

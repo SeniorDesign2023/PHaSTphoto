@@ -169,3 +169,34 @@
   height: 30px; /* Adjust height as needed */
   width: auto; /* Maintain aspect ratio */
 }
+
+.toggle-button {
+    background-color: #007bff; /* Blue background color */
+    color: #fff; /* White text color */
+    padding: 10px 20px; /* Add padding around the button text */
+    border: 2px solid transparent; /* Add a transparent border so hovering doesn't change toolbar size */
+    border-radius: 5px; /* Add rounded corners */
+    font-size: 16px; /* Adjust font size */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .toggle-button.active {
+    background-color: #28a745;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  .toggle-button:hover {
+    background-color: #0056b3; /* Darker shade of blue on hover */
+    color: #fff; /* White text color on hover */
+    border: 2px solid #fff;
+  }
+
+  .toggle-button.active:hover {
+    background-color: #077c22;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  

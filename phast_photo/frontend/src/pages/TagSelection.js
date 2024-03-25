@@ -7,6 +7,7 @@ function TagSelection() {
   const [photoPaths, setPhotoPaths] = useState([]);
   const [folderName, setFolderName] = useState('');
   const [Uploaded, setUploaded] = useState(false);
+  const [aiTagsEnabled, setAiTagsEnabled] = useState(false);
 
   const handleFileInputChange = async (event) => {
     const files = event.target.files || event.dataTransfer.files; // Accept files from input or drop
@@ -18,9 +19,11 @@ function TagSelection() {
     Array.from(files).forEach(file => {
       formData.append('photos', file);
     });
+
+    formData.append('aiTagsEnabled', aiTagsEnabled.toString());
   
     try {
-      const response = await fetch('http://localhost:4000/upload', { 
+      const response = await fetch(`http://localhost:4000/upload?aiTagsEnabled=${aiTagsEnabled}`, { 
         method: 'POST',
         body: formData,
       });
@@ -39,6 +42,11 @@ function TagSelection() {
     }
   };
 
+  const handleToggleAiTags = () => {
+    setAiTagsEnabled(prevState => !prevState);
+  };
+  
+
   const handleToggleUpload = () => {
     const fileInput = document.getElementById('file-input');
     if (fileInput) {
@@ -49,9 +57,11 @@ function TagSelection() {
 
   const handleClearPhotos = async () => {
     try {
-      const response = await fetch('http://localhost:4000/upload', { 
+      const formData = new FormData();
+      formData.append('aiTagsEnabled', aiTagsEnabled.toString());
+      const response = await fetch(`http://localhost:4000/upload?aiTagsEnabled=${aiTagsEnabled}`, { 
         method: 'POST',
-        body: new FormData(),
+        body: formData,
       });
   
       if (!response.ok) {
@@ -211,6 +221,7 @@ function TagSelection() {
         <input id="file-input" type="file" onChange={handleFileInputChange} style={{ display: 'none' }} multiple />
         <button onClick={handleToggleUpload} className="toolbar-button">Upload Photos</button>
         <button onClick={handleClearPhotos} className="toolbar-button">Clear Photos</button>
+        <button className={`toggle-button ${aiTagsEnabled ? 'active' : ''}`} onClick={handleToggleAiTags}>Enable AI Tagging</button>
       </div>
       <div className="logo-container">
         <img src="/logo192.png" alt="Logo" className="logo"/>
