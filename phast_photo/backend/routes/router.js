@@ -256,7 +256,8 @@ function dumbTag({ key, value }) {
         'LensSerialNumber', 'ExposureCompensation', 'SubjectDistanceRange',
         'FocalLengthIn35mmFormat', 'FNumber', 'GPSAltitude', 'GPSDestBearingRef', 'YCbCrPositioning',
         'ExifImageWidth', 'ExifImageHeight', 'ImageUniqueID', 'Orientation', 'HostComputer',
-        'GPSAltitudeRef', 'GPSTimeStamp', 'GPSDateStamp', 'SubSecTime'
+        'GPSAltitudeRef', 'GPSTimeStamp', 'GPSDateStamp', 'SubSecTime', 'TileWidth',
+        'TileLength', 'RecommendedExposureIndex', 'GPSDOP', 'InteropIndex'
     ];
 
     return ignoredTags.includes(key);
