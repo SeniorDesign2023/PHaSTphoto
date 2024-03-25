@@ -224,7 +224,7 @@ function TagSelection() {
         <button className={`toggle-button ${aiTagsEnabled ? 'active' : ''}`} onClick={handleToggleAiTags}>Enable AI Tagging</button>
       </div>
       <div className="logo-container">
-        <img src="/logo192.png" alt="Logo" className="logo"/>
+        <img src="/PHaST_Logo.png" alt="Logo" className="top-logo"/>
       </div>
     </div>
     {Uploaded ? (
@@ -282,7 +282,7 @@ function TagSelection() {
       ) : (
         <div className="upload-placeholder">
           {/* <h1 className="title">Your Title Here</h1> */}
-          <img src="/logo192.png" alt="Main Logo" className="upload-logo"/>
+          <img src="/PHaST_Logo.png" alt="Main Logo" className="upload-logo"/>
           
           <label htmlFor="file-input" className="upload-box" onDragOver={handleDragOver} onDragEnter={handleDragEnter} 
           onDrop={handleDrop}>

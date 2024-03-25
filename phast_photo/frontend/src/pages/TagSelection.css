@@ -142,6 +142,13 @@
 } */
 
 .upload-logo{
+    width: 500px; /* adjust as needed */
+    height: auto;
+    display: block;
+    margin: 0 auto; /* center the logo */
+}
+
+.top-logo{
     width: 100px; /* adjust as needed */
     height: auto;
     display: block;
