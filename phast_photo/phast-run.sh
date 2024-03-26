@@ -9,5 +9,4 @@ run_npm_start() {
 }
 run_npm_start "$directory1" &
 run_npm_start "$directory2" &
-
 wait./
