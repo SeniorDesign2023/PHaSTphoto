@@ -8,6 +8,8 @@ function TagSelection() {
   const [folderName, setFolderName] = useState('');
   const [Uploaded, setUploaded] = useState(false);
   const [aiTagsEnabled, setAiTagsEnabled] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleFileInputChange = async (event) => {
     const files = event.target.files || event.dataTransfer.files; // Accept files from input or drop
@@ -105,7 +107,6 @@ function TagSelection() {
   const handleTagChange = (event) => {
     const tag = event.target.value;
     const isChecked = event.target.checked;
-    //console.log("Checkbox clicked: ", tag, isChecked); 
 
     setSelectedTags((prevSelectedTags) => {
       if (isChecked) {
@@ -262,10 +263,22 @@ function TagSelection() {
         </div>
           <div className="thumbnail-container" >
             {photoPaths.map((photoPath, index) => (
-                <img key={index} src={`http://localhost:4000${photoPath.filePath}`} alt={`${index}`} />
+                <img key={index} 
+                src={`http://localhost:4000${photoPath.filePath}`} 
+                alt={`${index}`} 
+                onClick={() => {
+                  setSelectedImage(`http://localhost:4000${photoPath.filePath}`);
+                  setIsModalOpen(true);
+                }}
+                />
               ))
             }
           </div>
+          {isModalOpen && (
+            <div className="modal" onClick={() => setIsModalOpen(false)}>
+              <img className="modal-content" src={selectedImage} alt='modal-img'/>
+            </div>
+          )}
         </div>
           <footer className="download-footer">
             <button onClick={handleDownload} className="download-button">

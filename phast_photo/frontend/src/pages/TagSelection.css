@@ -126,6 +126,7 @@
     object-fit: contain;
 }
 
+
 .clear-button {
     margin-left: 20px; /* Add margin to separate from the upload button */
 }
@@ -134,12 +135,6 @@
     display: flex;
     flex-direction: column;
 }
-
-/* .title {
-    text-align: center;
-    font-size: 24px; 
-    justify-content: center;
-} */
 
 .upload-logo{
     width: 500px; /* adjust as needed */
@@ -206,4 +201,21 @@
     border-radius: 5px;
   }
   
+  .modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.582);
+    display: flex; /* Add this */
+    justify-content: center; /* Add this */
+    align-items: center; /* Add this */
+  }
   
+  .modal-content {
+    margin: 15% auto;
+    padding: 20px;
+    height: 90%;
+  }
