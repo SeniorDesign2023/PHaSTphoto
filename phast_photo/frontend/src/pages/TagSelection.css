@@ -219,3 +219,19 @@
     padding: 20px;
     height: 90%;
   }
+
+  .progress-bar-container {
+    width: 100%;
+    height: 20px; /* Adjust height as needed */
+    background-color: #f0f0f0; /* Background color of the progress bar container */
+    border-radius: 5px; /* Add rounded corners */
+    margin-bottom: 10px; /* Add some spacing between the progress bar and other elements */
+    padding: 10px;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background-color: #007bff; /* Color of the progress bar */
+    border-radius: 5px; /* Add rounded corners */
+    transition: width 0.3s ease; /* Add smooth transition for width changes */
+  }

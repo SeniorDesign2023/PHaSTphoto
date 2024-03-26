@@ -6,15 +6,20 @@ function TagSelection() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [photoPaths, setPhotoPaths] = useState([]);
   const [folderName, setFolderName] = useState('');
-  const [Uploaded, setUploaded] = useState(false);
+  const [uploaded, setUploaded] = useState(false);
   const [aiTagsEnabled, setAiTagsEnabled] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [progress, setProgress] = useState(0); // Add progress state
+  const [loading, setLoading] = useState(false);
 
   const handleFileInputChange = async (event) => {
-    const files = event.target.files || event.dataTransfer.files; // Accept files from input or drop
+    setLoading(true);
+    setProgress(0); // Reset progress when uploading new files
+
+    const files = event.target.files || event.dataTransfer.files;
     if (files.length === 0) {
-      return; // Do nothing if no files are selected
+      return;
     }
   
     const formData = new FormData();
@@ -23,26 +28,39 @@ function TagSelection() {
     });
 
     formData.append('aiTagsEnabled', aiTagsEnabled.toString());
-  
-    try {
-      const response = await fetch(`http://localhost:4000/upload?aiTagsEnabled=${aiTagsEnabled}`, { 
-        method: 'POST',
-        body: formData,
-      });
-  
-      if (!response.ok) {
-        throw new Error('File upload failed');
-      }
-  
-      const result = await response.json();
-      console.log('Upload successful', result);
-      setUploaded(true);
-      fetchTags(); // Refresh tags after upload
-      fetchPhotos(); // Refresh photo paths after upload
-    } catch (error) {
-      console.error('Upload error', error);
-    }
-  };
+
+    const xhr = new XMLHttpRequest();
+
+    // Listen for upload progress events
+    xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+            const progressPercentage = event.loaded * 100.0 / event.total;
+            console.log(progressPercentage)
+            setProgress(progressPercentage);
+        }
+    });
+
+    // Configure XMLHttpRequest
+    xhr.open('POST', `http://localhost:4000/upload?aiTagsEnabled=${aiTagsEnabled}`, true);
+    xhr.setRequestHeader('Authorization', 'Bearer token'); // Add any necessary headers
+    xhr.responseType = 'json';
+
+    // Handle response
+    xhr.onload = () => {
+        if (xhr.status === 200) {
+            console.log('Upload successful', xhr.response);
+            setUploaded(true);
+            fetchTags();
+            fetchPhotos();
+        } else {
+            console.error('File upload failed');
+        }
+    };
+
+    // Send the FormData
+    xhr.send(formData);
+};
+
 
   const handleToggleAiTags = () => {
     setAiTagsEnabled(prevState => !prevState);
@@ -58,6 +76,7 @@ function TagSelection() {
   };
 
   const handleClearPhotos = async () => {
+    setProgress(0);
     try {
       const formData = new FormData();
       formData.append('aiTagsEnabled', aiTagsEnabled.toString());
@@ -96,6 +115,7 @@ function TagSelection() {
     } catch (error) {
       console.error('Error fetching tags:', error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -228,7 +248,12 @@ function TagSelection() {
         <img src="/PHaST_Logo.png" alt="Logo" className="top-logo"/>
       </div>
     </div>
-    {Uploaded ? (
+    {loading ? (
+      <div className="progress-bar-container">
+        <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+      </div>
+    ) : null}
+    {uploaded ? (
       <>
       <div className="main-container">
         <div className="tag-selection-container">
@@ -296,7 +321,6 @@ function TagSelection() {
         <div className="upload-placeholder">
           {/* <h1 className="title">Your Title Here</h1> */}
           <img src="/PHaST_Logo.png" alt="Main Logo" className="upload-logo"/>
-          
           <label htmlFor="file-input" className="upload-box" onDragOver={handleDragOver} onDragEnter={handleDragEnter} 
           onDrop={handleDrop}>
             No photos uploaded. Click the "Upload Photos" button or drag and drop photos here to get started.
