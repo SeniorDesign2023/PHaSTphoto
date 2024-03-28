@@ -219,7 +219,14 @@ function TagSelection() {
     <div className="app-container">
     <div className="toolbar">
       <div className="button-container">
-        <input id="file-input" type="file" onChange={handleFileInputChange} style={{ display: 'none' }} multiple />
+        <input 
+          id="file-input" 
+          type="file" 
+          onClick={(e) => { e.target.value = null }}
+          onChange={handleFileInputChange} 
+          style={{ display: 'none' }} 
+          multiple 
+        />
         <button onClick={handleToggleUpload} className="toolbar-button">Upload Photos</button>
         <button onClick={handleClearPhotos} className="toolbar-button">Clear Photos</button>
         <button className={`toggle-button ${aiTagsEnabled ? 'active' : ''}`} onClick={handleToggleAiTags}>Enable AI Tagging</button>
