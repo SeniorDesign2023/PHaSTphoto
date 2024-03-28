@@ -173,7 +173,7 @@
 }
 
 .toggle-button {
-    background-color: #007bff; /* Blue background color */
+    background-color: #bbbbbb; /* Blue background color */
     color: #fff; /* White text color */
     padding: 10px 20px; /* Add padding around the button text */
     border: 2px solid transparent; /* Add a transparent border so hovering doesn't change toolbar size */
@@ -188,9 +188,9 @@
     color: white;
     border-radius: 5px;
   }
-  
+
   .toggle-button:hover {
-    background-color: #0056b3; /* Darker shade of blue on hover */
+    background-color: #646464; /* Darker shade of blue on hover */
     color: #fff; /* White text color on hover */
     border: 2px solid #fff;
   }

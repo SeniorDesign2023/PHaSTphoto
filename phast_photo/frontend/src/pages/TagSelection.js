@@ -241,7 +241,7 @@ function TagSelection() {
         <button onClick={handleClearPhotos} className="toolbar-button">Clear Photos</button>
         <button className={`toggle-button ${aiTagsEnabled ? 'active' : ''}`} onClick={handleToggleAiTags}>Enable AI Tagging</button>
         {uploaded ? (
-        <button className="toggle-button" onClick={handleToggleQueryType}>Combine Tags With: {queryType}</button>
+        <button className="toolbar-button" onClick={handleToggleQueryType}>Combine Tags With: {queryType}</button>
         ): null}
       </div>
       <div className="logo-container">
