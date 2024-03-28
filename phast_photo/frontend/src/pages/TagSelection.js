@@ -10,17 +10,24 @@ function TagSelection() {
   const [aiTagsEnabled, setAiTagsEnabled] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [progress, setProgress] = useState(0); // Add progress state
   const [loading, setLoading] = useState(false);
+  const [queryType, setQueryType] = useState('AND');
+
+  const handleToggleQueryType = () => {
+    setQueryType(prevQueryType => {
+      const newQueryType = prevQueryType === 'AND' ? 'OR' : 'AND';
+      updateDisplay(); 
+      return newQueryType;
+    });
+  };
 
   const handleFileInputChange = async (event) => {
     // Reset progress when uploading new files
     setLoading(true);
-    setProgress(0);
 
     const files = event.target.files || event.dataTransfer.files;
     if (files.length === 0) {
-      return;
+      return; // Do nothing if no files are selected
     }
   
     const formData = new FormData();
@@ -43,8 +50,8 @@ function TagSelection() {
       const result = await response.json();
       console.log('Upload successful', result);
       setUploaded(true);
-      fetchTags();
-      fetchPhotos();
+      fetchTags(); 
+      fetchPhotos(); 
     } catch (error) {
       console.error('Upload error', error);
     }
@@ -65,7 +72,6 @@ function TagSelection() {
   };
 
   const handleClearPhotos = async () => {
-    setProgress(0);
 
     try {
       const formData = new FormData();
@@ -81,8 +87,8 @@ function TagSelection() {
   
       const result = await response.json();
       console.log('clear successful', result);
-      fetchTags(); // Refresh tags after upload
-      fetchPhotos(); // Refresh photo paths after upload
+      fetchTags(); 
+      fetchPhotos(); 
       setUploaded(false);
     } catch (error) {
       console.error('Upload error', error);
@@ -129,19 +135,13 @@ function TagSelection() {
   };
   
   useEffect(() => {
-    if(selectedTags&&selectedTags.length>0){
+    if(selectedTags && selectedTags.length > 0) {
       updateDisplay();
-      //photoPaths.forEach(function(element){console.log(element)});
-    }
-    else{
+    } else {
       fetchPhotos();
     }
-    
-    selectedTags.forEach(function(element){console.log(element)});
+  }, [selectedTags, queryType]);
 
-  }, [selectedTags]);
-
-////////////////////////////////////// new ver ^^^
 
   const updateDisplay = async () => {
     try {
@@ -150,7 +150,7 @@ function TagSelection() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ selectedTags}),
+        body: JSON.stringify({ selectedTags, queryType}),
       });
       if (newDisp.ok) {
         const data = await newDisp.json();
@@ -176,7 +176,7 @@ function TagSelection() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ selectedTags, folderName }), // Include folderName in the request body
+        body: JSON.stringify({ selectedTags, folderName, queryType }), 
       });
 
       if (response.ok) {
@@ -184,7 +184,7 @@ function TagSelection() {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `${folderName}.zip`; // Use folderName as the zip file name
+          a.download = `${folderName}.zip`; 
           document.body.appendChild(a); 
           a.click();
           a.remove(); 
@@ -229,20 +229,30 @@ function TagSelection() {
     <div className="app-container">
     <div className="toolbar">
       <div className="button-container">
-        <input id="file-input" type="file" onChange={handleFileInputChange} style={{ display: 'none' }} multiple />
+        <input 
+          id="file-input" 
+          type="file" 
+          onClick={(e) => { e.target.value = null }}
+          onChange={handleFileInputChange} 
+          style={{ display: 'none' }} 
+          multiple 
+        />
         <button onClick={handleToggleUpload} className="toolbar-button">Upload Photos</button>
         <button onClick={handleClearPhotos} className="toolbar-button">Clear Photos</button>
         <button className={`toggle-button ${aiTagsEnabled ? 'active' : ''}`} onClick={handleToggleAiTags}>Enable AI Tagging</button>
+        {uploaded ? (
+        <button className="toggle-button" onClick={handleToggleQueryType}>Combine Tags With: {queryType}</button>
+        ): null}
       </div>
       <div className="logo-container">
         <img src="/PHaST_Logo.png" alt="Logo" className="top-logo"/>
       </div>
     </div>
     {loading ? (
-        <div className="progress-bar-container">
-          <div className="progress-bar" style={{ width: `${progress}%` }}></div>
-        </div>
-      ): null}
+      <div className="loading-spinner-container">
+        <div className="loading-spinner"></div>
+      </div>
+    ) : null}
     {uploaded ? (
       <>
       <div className="main-container">
