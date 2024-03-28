@@ -307,7 +307,6 @@ function TagSelection() {
         </>
       ) : (
         <div className="upload-placeholder">
-          {/* <h1 className="title">Your Title Here</h1> */}
           <img src="/PHaST_Logo.png" alt="Main Logo" className="upload-logo"/>
           
           <label htmlFor="file-input" className="upload-box" onDragOver={handleDragOver} onDragEnter={handleDragEnter} 
