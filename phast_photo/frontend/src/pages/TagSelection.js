@@ -14,8 +14,9 @@ function TagSelection() {
   const [loading, setLoading] = useState(false);
 
   const handleFileInputChange = async (event) => {
+    // Reset progress when uploading new files
     setLoading(true);
-    setProgress(0); // Reset progress when uploading new files
+    setProgress(0);
 
     const files = event.target.files || event.dataTransfer.files;
     if (files.length === 0) {
@@ -28,39 +29,27 @@ function TagSelection() {
     });
 
     formData.append('aiTagsEnabled', aiTagsEnabled.toString());
-
-    const xhr = new XMLHttpRequest();
-
-    // Listen for upload progress events
-    xhr.upload.addEventListener('progress', (event) => {
-        if (event.lengthComputable) {
-            const progressPercentage = event.loaded * 100.0 / event.total;
-            console.log(progressPercentage)
-            setProgress(progressPercentage);
-        }
-    });
-
-    // Configure XMLHttpRequest
-    xhr.open('POST', `http://localhost:4000/upload?aiTagsEnabled=${aiTagsEnabled}`, true);
-    xhr.setRequestHeader('Authorization', 'Bearer token'); // Add any necessary headers
-    xhr.responseType = 'json';
-
-    // Handle response
-    xhr.onload = () => {
-        if (xhr.status === 200) {
-            console.log('Upload successful', xhr.response);
-            setUploaded(true);
-            fetchTags();
-            fetchPhotos();
-        } else {
-            console.error('File upload failed');
-        }
-    };
-
-    // Send the FormData
-    xhr.send(formData);
-};
-
+  
+    try {
+      const response = await fetch(`http://localhost:4000/upload?aiTagsEnabled=${aiTagsEnabled}`, { 
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error('File upload failed');
+      }
+  
+      const result = await response.json();
+      console.log('Upload successful', result);
+      setUploaded(true);
+      fetchTags();
+      fetchPhotos();
+    } catch (error) {
+      console.error('Upload error', error);
+    }
+  };
+  
 
   const handleToggleAiTags = () => {
     setAiTagsEnabled(prevState => !prevState);
@@ -77,6 +66,7 @@ function TagSelection() {
 
   const handleClearPhotos = async () => {
     setProgress(0);
+
     try {
       const formData = new FormData();
       formData.append('aiTagsEnabled', aiTagsEnabled.toString());
@@ -249,10 +239,10 @@ function TagSelection() {
       </div>
     </div>
     {loading ? (
-      <div className="progress-bar-container">
-        <div className="progress-bar" style={{ width: `${progress}%` }}></div>
-      </div>
-    ) : null}
+        <div className="progress-bar-container">
+          <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+        </div>
+      ): null}
     {uploaded ? (
       <>
       <div className="main-container">
@@ -321,6 +311,7 @@ function TagSelection() {
         <div className="upload-placeholder">
           {/* <h1 className="title">Your Title Here</h1> */}
           <img src="/PHaST_Logo.png" alt="Main Logo" className="upload-logo"/>
+          
           <label htmlFor="file-input" className="upload-box" onDragOver={handleDragOver} onDragEnter={handleDragEnter} 
           onDrop={handleDrop}>
             No photos uploaded. Click the "Upload Photos" button or drag and drop photos here to get started.

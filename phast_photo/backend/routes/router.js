@@ -1,22 +1,16 @@
 const moment = require('moment');
-const http = require('http');
 const express = require('express');
-const socketIo = require('socket.io');
-const multer = require('multer');
-const exifParser = require('exif-parser');
+const router = express.Router();
 const Photo = require('../models/photo');
 const fs = require('fs');
-const archiver = require('archiver');
 const path = require('path');
-const router = express.Router();
+const multer = require('multer');
+const exifParser = require('exif-parser');
+const archiver = require('archiver');
 const axios = require('axios');
 const api_key = process.env.OPENAI_API_KEY;
+const { io } = require('../index'); // Adjust the path as needed
 
-const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
-
-app.io = io; // Attach socket.io server to the Express app
 
 const storage = multer.diskStorage({
     destination: 'temp/',
@@ -130,18 +124,18 @@ router.post('/upload', clearTempMiddleware, (req, res) => {
                 imageInfoArray.push(newPhoto);
 
                 uploadedFiles++;
+                const progress = uploadedFiles*1.0 / totalFiles * 100;
+                console.log(progress)
+                
+
             } catch (error) {
                 console.error('Error processing file:', error);
             }
         }
 
-        const progress = uploadedFiles / totalFiles * 100;
-        app.io.emit('uploadProgress', progress); // Emit progress to connected clients
-
         res.status(200).json({ message: 'Files uploaded and saved to database successfully', data: imageInfoArray });
     });
 });
-
 
 
 
