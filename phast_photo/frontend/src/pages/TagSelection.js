@@ -6,10 +6,11 @@ function TagSelection() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [photoPaths, setPhotoPaths] = useState([]);
   const [folderName, setFolderName] = useState('');
-  const [Uploaded, setUploaded] = useState(false);
+  const [uploaded, setUploaded] = useState(false);
   const [aiTagsEnabled, setAiTagsEnabled] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [queryType, setQueryType] = useState('AND');
 
   const handleToggleQueryType = () => {
@@ -21,9 +22,12 @@ function TagSelection() {
   };
 
   const handleFileInputChange = async (event) => {
-    const files = event.target.files || event.dataTransfer.files; 
+    // Reset progress when uploading new files
+    setLoading(true);
+
+    const files = event.target.files || event.dataTransfer.files;
     if (files.length === 0) {
-      return; 
+      return; // Do nothing if no files are selected
     }
   
     const formData = new FormData();
@@ -52,6 +56,7 @@ function TagSelection() {
       console.error('Upload error', error);
     }
   };
+  
 
   const handleToggleAiTags = () => {
     setAiTagsEnabled(prevState => !prevState);
@@ -67,6 +72,7 @@ function TagSelection() {
   };
 
   const handleClearPhotos = async () => {
+
     try {
       const formData = new FormData();
       formData.append('aiTagsEnabled', aiTagsEnabled.toString());
@@ -105,6 +111,7 @@ function TagSelection() {
     } catch (error) {
       console.error('Error fetching tags:', error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -233,7 +240,7 @@ function TagSelection() {
         <button onClick={handleToggleUpload} className="toolbar-button">Upload Photos</button>
         <button onClick={handleClearPhotos} className="toolbar-button">Clear Photos</button>
         <button className={`toggle-button ${aiTagsEnabled ? 'active' : ''}`} onClick={handleToggleAiTags}>Enable AI Tagging</button>
-        {Uploaded ? (
+        {uploaded ? (
         <button className="toggle-button" onClick={handleToggleQueryType}>Combine Tags With: {queryType}</button>
         ): null}
       </div>
@@ -241,7 +248,12 @@ function TagSelection() {
         <img src="/PHaST_Logo.png" alt="Logo" className="top-logo"/>
       </div>
     </div>
-    {Uploaded ? (
+    {loading ? (
+      <div className="loading-spinner-container">
+        <div className="loading-spinner"></div>
+      </div>
+    ) : null}
+    {uploaded ? (
       <>
       <div className="main-container">
         <div className="tag-selection-container">

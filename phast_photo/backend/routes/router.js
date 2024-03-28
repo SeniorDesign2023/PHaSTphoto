@@ -1,12 +1,12 @@
 const moment = require('moment');
 const express = require('express');
-const multer = require('multer');
-const exifParser = require('exif-parser');
+const router = express.Router();
 const Photo = require('../models/photo');
 const fs = require('fs');
-const archiver = require('archiver');
 const path = require('path');
-const router = express.Router();
+const multer = require('multer');
+const exifParser = require('exif-parser');
+const archiver = require('archiver');
 const axios = require('axios');
 const api_key = process.env.OPENAI_API_KEY;
 const app = express();
@@ -145,6 +145,7 @@ router.post('/upload', clearTempMiddleware, (req, res) => {
         res.status(200).json({ message: 'Files uploaded and saved to database successfully', data: imageInfoArray });
     });
 });
+
 
 
 function alterAndCleanMetadata(metadata) {
@@ -425,9 +426,6 @@ router.get('/listPhotoPaths', (req, res) => {
       }
     });
 });
-
-
-
 
 
 module.exports = router;
