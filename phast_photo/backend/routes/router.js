@@ -10,6 +10,8 @@ const router = express.Router();
 const axios = require('axios');
 const api_key = process.env.OPENAI_API_KEY;
 const app = express();
+const sharp = require('sharp');
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -40,13 +42,22 @@ const clearTempMiddleware = (req, res, next) => {
     next();
 };
 
-function encodeImage(imagePath) {
-    let imageBase64 = fs.readFileSync(imagePath, { encoding: 'base64' });
-    return imageBase64;
+async function compressImage(fileBuffer) {
+    try {
+        const compressedBuffer = await sharp(fileBuffer)
+            .resize({ fit: 'inside', width: 1920 }) 
+            .toFormat('jpeg') 
+            .jpeg({ quality: 1 }) //1% of original photo
+            .toBuffer({ resolveWithObject: true });       
+        return compressedBuffer.data;
+    } catch (error) {
+        console.error('Error compressing image:', error);
+        throw error;
+    }
 }
 
-async function getTagsFromOpenAI(imagePath) {
-    let imageBase64 = encodeImage(imagePath);
+async function getTagsFromOpenAI(imageBuffer) {
+    let imageBase64 = imageBuffer.toString('base64');
     let headers = {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${api_key}`
@@ -107,10 +118,15 @@ router.post('/upload', clearTempMiddleware, (req, res) => {
                 metadata = parser.parse();
                 alterAndCleanMetadata(metadata);
 
-                if (aiTagsEnabled && api_key) { 
-                    const openAITagsString = await getTagsFromOpenAI(file.path);
-                    const openAITagsArray = openAITagsString.split(', ').map(tag => tag.trim());
-                    metadata.tags['GptGeneratedTags'] = openAITagsArray;
+                if (aiTagsEnabled && api_key) {
+                    try {
+                        const compressedBuffer = await compressImage(buffer);
+                        const openAITagsString = await getTagsFromOpenAI(compressedBuffer);
+                        const openAITagsArray = openAITagsString.split(', ').map(tag => tag.trim());
+                        metadata.tags['GptGeneratedTags'] = openAITagsArray;
+                    } catch (error) {
+                        console.error('Error processing image:', error);
+                    }
                 }
                 
                 const newPhoto = new Photo({
@@ -173,7 +189,6 @@ function alterTag(metadata, key, value) {
                     }
                     break;
         default:
-            // Leave other tags as they are
             break;
     }
 }
@@ -184,11 +199,9 @@ function alterDateTimeOriginal(metadata, value) {
     var day = date.date();
     var clock = date.hour();
 
-    // Determine season
     let season = getSeason(month, day);
     metadata.tags['Season'] = season;
 
-    // Determine time of day
     let daytime = getTimeOfDay(clock);
     metadata.tags['Daytime'] = daytime;
 }
@@ -240,7 +253,6 @@ function getContinent(latitude, longitude) {
 }
 
 function dumbTag({ key, value }) {
-    // Define tags to be ignored
     const ignoredTags = [
         'XResolution', 'YResolution', 'ResolutionUnit', 'undefined',
         'ExposureProgram', 'MeteringMode', 'MaxApertureValue', 'LightSource',
@@ -265,11 +277,11 @@ function dumbTag({ key, value }) {
 router.post('/photoSieve', async (req, res) => {
     try {
         const selectedTags = req.body.selectedTags;
+        const queryType = req.body.queryType;
 
         const tagQueries = selectedTags.map(tag => {
             const [key, value] = tag.split(':');
             if (key === 'GptGeneratedTags') {
-                // Use $in to match any of the tags in the array
                 return { [`metadata.tags.${key}`]: { $in: [value] } };
             } else {
                 const parsedValue = isNaN(Number(value)) ? value : Number(value);
@@ -277,7 +289,14 @@ router.post('/photoSieve', async (req, res) => {
             }
         });
 
-        const query = { $and: tagQueries };
+        let query;
+        if (queryType === 'AND') {
+            query = { $and: tagQueries };
+        } else if (queryType === 'OR') {
+            query = { $or: tagQueries };
+        } else {
+            return res.status(400).json({ message: 'Invalid query type' });
+        }
 
         const photos = await Photo.find(query);
 
@@ -301,12 +320,12 @@ router.post('/photoSieve', async (req, res) => {
 router.post('/downloadPhotos', async (req, res) => {
     try {
         const selectedTags = req.body.selectedTags;
-        const folderName = req.body.folderName; // Add this line to get the folder name from the request body
+        const folderName = req.body.folderName;
+        const queryType = req.body.queryType;
 
         const tagQueries = selectedTags.map(tag => {
             const [key, value] = tag.split(':');
             if (key === 'GptGeneratedTags') {
-                // Use $in to match any of the tags in the array
                 return { [`metadata.tags.${key}`]: { $in: [value] } };
             } else {
                 const parsedValue = isNaN(Number(value)) ? value : Number(value);
@@ -314,7 +333,14 @@ router.post('/downloadPhotos', async (req, res) => {
             }
         });
 
-        const query = { $and: tagQueries };
+        let query;
+        if (queryType === 'AND') {
+            query = { $and: tagQueries };
+        } else if (queryType === 'OR') {
+            query = { $or: tagQueries };
+        } else {
+            return res.status(400).json({ message: 'Invalid query type' });
+        }
 
         const photos = await Photo.find(query);
 
@@ -335,7 +361,7 @@ router.post('/downloadPhotos', async (req, res) => {
         });
 
         res.setHeader('Content-Type', 'application/zip');
-        res.setHeader('Content-Disposition', `attachment; filename=${folderName}.zip`); // Use folderName variable here
+        res.setHeader('Content-Disposition', `attachment; filename=${folderName}.zip`); 
 
         archive.pipe(res);
 
@@ -369,7 +395,6 @@ router.get('/getTags', async (req, res) => {
             }
         });
 
-        // Convert each Set to an array
         let tagsArray = {};
         for (const key in allTags) {
             tagsArray[key] = Array.from(allTags[key]);
@@ -396,7 +421,6 @@ router.get('/listPhotoPaths', (req, res) => {
           filename,
           filePath: `/getPhotos/${filename}`
         }));
-        //console.log(photoData[0].filePath);
         res.json({ photoData });
       }
     });
