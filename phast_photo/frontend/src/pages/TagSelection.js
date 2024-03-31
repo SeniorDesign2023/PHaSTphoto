@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './TagSelection.css';
+// import { set } from 'mongoose';
 
 function TagSelection() {
-  const [tags, setTags] = useState({});
+  const [allTags, setAllTags] = useState({});
   const [selectedTags, setSelectedTags] = useState([]);
   const [photoPaths, setPhotoPaths] = useState([]);
   const [folderName, setFolderName] = useState('');
@@ -12,6 +13,7 @@ function TagSelection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [queryType, setQueryType] = useState('AND');
+  const [incompatibleTags, setIncompatibleTags] = useState([]);
 
   const handleToggleQueryType = () => {
     setQueryType(prevQueryType => {
@@ -104,7 +106,7 @@ function TagSelection() {
         if (processedTags.GptGeneratedTags && processedTags.GptGeneratedTags.length) {
           processedTags.GptGeneratedTags = [...new Set(processedTags.GptGeneratedTags.flat().flatMap(tag => tag.split(',')))];
         }
-        setTags(processedTags);
+        setAllTags(processedTags);
       } else {
         console.error('Error fetching tags:', response.statusText);
       }
@@ -119,21 +121,44 @@ function TagSelection() {
     fetchPhotos();
   }, []);
 
+  const fetchIncompatibleTags = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/tagSieve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ selectedTags }),
+      });
+
+      const data = await response.json();
+
+      console.log('compatible tags: '+ data.compatibleTags);
+      
+      const incompatibleTags = Object.entries(allTags)
+          .flatMap(([key, values]) => 
+            (Array.isArray(values) ? values : [values]).map(value => `${key}:${value.trim()}`)
+          )
+          .filter(tag => !data.compatibleTags.includes(tag));
+
+      console.log('incompatible tags: '+ incompatibleTags);
+      setIncompatibleTags(incompatibleTags);
+    } catch (error) {
+      console.error('Error fetching compatible tags:', error);
+    }
+  };
 
   const handleTagChange = (event) => {
-    const tag = event.target.value;
-    const isChecked = event.target.checked;
+    const { checked, value } = event.target;
 
-    setSelectedTags((prevSelectedTags) => {
-      if (isChecked) {
-        return [...prevSelectedTags, tag];
-      } else {
-        return prevSelectedTags.filter((selectedTag) => selectedTag !== tag);
-      }
-      
-    });
+    if (checked) {
+      setSelectedTags((prevTags) => [...prevTags, value]);
+    } else {
+      setSelectedTags((prevTags) => prevTags.filter((tag) => tag !== value));
+    }
+
   };
-  
+
   useEffect(() => {
     if(selectedTags && selectedTags.length > 0) {
       updateDisplay();
@@ -142,6 +167,14 @@ function TagSelection() {
     }
   }, [selectedTags, queryType]);
 
+  useEffect(() => {
+    if (selectedTags && selectedTags.length > 0 && queryType === 'AND') {
+      fetchIncompatibleTags();
+    }
+    else {
+      setIncompatibleTags([]);
+    }
+  }, [selectedTags]);
 
   const updateDisplay = async () => {
     try {
@@ -259,7 +292,7 @@ function TagSelection() {
         <div className="tag-selection-container">
           <h1>Select Tags</h1>
           <div className="tag-groups-container">
-            {Object.entries(tags).map(([key, values]) => {
+            {Object.entries(allTags).map(([key, values]) => {
               if (!Array.isArray(values)) {
                 values = [values];
               }
@@ -277,7 +310,12 @@ function TagSelection() {
                           checked={selectedTags.includes(`${key}:${value.trim()}`)}
                           onChange={handleTagChange}
                         />
-                        <label htmlFor={`${key}:${index}`}>{value.trim()}</label>
+                        <label 
+                          htmlFor={`${key}:${index}`}
+                          style={{ color: incompatibleTags.includes(`${key}:${value.trim()}`) ? 'red' : 'black' }}
+                        >
+                          {value.trim()}
+                        </label>
                       </div>
                     ))}
                   </div>

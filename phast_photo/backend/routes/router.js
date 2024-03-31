@@ -275,6 +275,7 @@ function dumbTag({ key, value }) {
 
     return ignoredTags.includes(key);
 }
+
 router.post('/photoSieve', async (req, res) => {
     try {
         const selectedTags = req.body.selectedTags;
@@ -300,16 +301,12 @@ router.post('/photoSieve', async (req, res) => {
         }
 
         const photos = await Photo.find(query);
-
-       
-
         
         var validDisplay=photos.map(photo => {
             const fileName=path.parse(photo.filePath).base;
             return{
                 fileName,
                 filePath: `/getPhotos/${fileName}`};
-            
           });
 
         res.json({photoData: validDisplay});
@@ -318,6 +315,7 @@ router.post('/photoSieve', async (req, res) => {
         console.error('Error updating display:', error);
     }
 });
+
 router.post('/downloadPhotos', async (req, res) => {
     try {
         const selectedTags = req.body.selectedTags;
@@ -405,6 +403,42 @@ router.get('/getTags', async (req, res) => {
     } catch (err) {
         console.error('Error fetching tags:', err);
         res.status(500).json({ message: 'Error fetching tags', error: err });
+    }
+});
+
+router.post('/tagSieve', async (req, res) => {
+    try {
+        const selectedTags = req.body.selectedTags;
+
+        if (!selectedTags || selectedTags.length === 0) {
+            return res.status(400).json({ error: 'No tags selected' });
+        }
+
+        const tagQueries = selectedTags.map(tag => {
+            const [key, value] = tag.split(':');
+            if (key === 'GptGeneratedTags') {
+                return { [`metadata.tags.${key}`]: { $in: [value] } };
+            } else {
+                const parsedValue = isNaN(Number(value)) ? value : Number(value);
+                return { [`metadata.tags.${key}`]: parsedValue };
+            }
+        });
+
+        const query = { $and: tagQueries };
+
+        const photos = await Photo.find(query);
+
+        var compatibleTags = photos.map(photo => {
+            return Object.entries(photo.metadata.tags).map(([key, value]) => `${key}:${value}`)
+        });
+
+        // remove duplicates
+        compatibleTags = Array.from(new Set(compatibleTags.flat()));
+
+        res.json({ compatibleTags });
+
+    } catch (error) {
+        console.error('Error fetching compatible tags:', error);
     }
 });
 
