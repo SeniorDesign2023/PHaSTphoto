@@ -92,6 +92,7 @@ function TagSelection() {
       fetchTags(); 
       fetchPhotos(); 
       setUploaded(false);
+      setSelectedTags([]);
     } catch (error) {
       console.error('Upload error', error);
     }
@@ -119,6 +120,7 @@ function TagSelection() {
   useEffect(() => {
     fetchTags();
     fetchPhotos();
+    setSelectedTags([]);
   }, []);
 
   const fetchIncompatibleTags = async () => {
@@ -133,15 +135,12 @@ function TagSelection() {
 
       const data = await response.json();
 
-      console.log('compatible tags: '+ data.compatibleTags);
-      
       const incompatibleTags = Object.entries(allTags)
           .flatMap(([key, values]) => 
             (Array.isArray(values) ? values : [values]).map(value => `${key}:${value.trim()}`)
           )
           .filter(tag => !data.compatibleTags.includes(tag));
 
-      console.log('incompatible tags: '+ incompatibleTags);
       setIncompatibleTags(incompatibleTags);
     } catch (error) {
       console.error('Error fetching compatible tags:', error);
@@ -160,21 +159,19 @@ function TagSelection() {
   };
 
   useEffect(() => {
-    if(selectedTags && selectedTags.length > 0) {
+    if (selectedTags && selectedTags.length > 0) {
       updateDisplay();
+  
+      if (queryType === 'AND') {
+        fetchIncompatibleTags();
+      } else {
+        setIncompatibleTags([]);
+      }
     } else {
       fetchPhotos();
-    }
-  }, [selectedTags, queryType]);
-
-  useEffect(() => {
-    if (selectedTags && selectedTags.length > 0 && queryType === 'AND') {
-      fetchIncompatibleTags();
-    }
-    else {
       setIncompatibleTags([]);
     }
-  }, [selectedTags]);
+  }, [selectedTags, queryType]);
 
   const updateDisplay = async () => {
     try {
@@ -309,10 +306,11 @@ function TagSelection() {
                           value={`${key}:${value.trim()}`}
                           checked={selectedTags.includes(`${key}:${value.trim()}`)}
                           onChange={handleTagChange}
+                          style={{opacity: incompatibleTags.includes(`${key}:${value.trim()}`) && !selectedTags.includes(`${key}:${value.trim()}`) ? '0.5' : '1'}}
                         />
                         <label 
                           htmlFor={`${key}:${index}`}
-                          style={{ color: incompatibleTags.includes(`${key}:${value.trim()}`) ? 'red' : 'black' }}
+                          style={{opacity: incompatibleTags.includes(`${key}:${value.trim()}`) && !selectedTags.includes(`${key}:${value.trim()}`) ? '0.5' : '1'}}
                         >
                           {value.trim()}
                         </label>

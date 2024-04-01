@@ -428,12 +428,14 @@ router.post('/tagSieve', async (req, res) => {
 
         const photos = await Photo.find(query);
 
-        var compatibleTags = photos.map(photo => {
-            return Object.entries(photo.metadata.tags).map(([key, value]) => `${key}:${value}`)
-        });
+        // Get all tags that are compatible with the selected tags
+        // Flatten the array of tags and remove duplicates
+        var compatibleTags = Array.from(new Set(
+            photos.map(photo => {
+                return Object.entries(photo.metadata.tags).map(([key, value]) => `${key}:${value}`)
+            })
+        .flat()));
 
-        // remove duplicates
-        compatibleTags = Array.from(new Set(compatibleTags.flat()));
 
         res.json({ compatibleTags });
 
