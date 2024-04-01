@@ -124,6 +124,10 @@ function TagSelection() {
   }, []);
 
   const fetchIncompatibleTags = async () => {
+    if (selectedTags.length === 0) {
+      return;
+    }
+    
     try {
       const response = await fetch('http://localhost:4000/tagSieve', {
         method: 'POST',
@@ -174,6 +178,10 @@ function TagSelection() {
   }, [selectedTags, queryType]);
 
   const updateDisplay = async () => {
+    if (selectedTags.length === 0) {
+      return;
+    }
+
     try {
       const newDisp = await fetch('http://localhost:4000/photoSieve',{
         method: 'POST',
