@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './TagSelection.css';
+// import { set } from 'mongoose';
 
 function TagSelection() {
-  const [tags, setTags] = useState({});
+  const [allTags, setAllTags] = useState({});
   const [selectedTags, setSelectedTags] = useState([]);
   const [photoPaths, setPhotoPaths] = useState([]);
   const [folderName, setFolderName] = useState('');
@@ -12,6 +13,7 @@ function TagSelection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [queryType, setQueryType] = useState('AND');
+  const [incompatibleTags, setIncompatibleTags] = useState([]);
 
   const handleToggleQueryType = () => {
     setQueryType(prevQueryType => {
@@ -90,6 +92,7 @@ function TagSelection() {
       fetchTags(); 
       fetchPhotos(); 
       setUploaded(false);
+      setSelectedTags([]);
     } catch (error) {
       console.error('Upload error', error);
     }
@@ -104,7 +107,7 @@ function TagSelection() {
         if (processedTags.GptGeneratedTags && processedTags.GptGeneratedTags.length) {
           processedTags.GptGeneratedTags = [...new Set(processedTags.GptGeneratedTags.flat().flatMap(tag => tag.split(',')))];
         }
-        setTags(processedTags);
+        setAllTags(processedTags);
       } else {
         console.error('Error fetching tags:', response.statusText);
       }
@@ -117,31 +120,58 @@ function TagSelection() {
   useEffect(() => {
     fetchTags();
     fetchPhotos();
+    setSelectedTags([]);
   }, []);
 
+  const fetchIncompatibleTags = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/tagSieve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ selectedTags }),
+      });
+
+      const data = await response.json();
+
+      const incompatibleTags = Object.entries(allTags)
+          .flatMap(([key, values]) => 
+            (Array.isArray(values) ? values : [values]).map(value => `${key}:${value.trim()}`)
+          )
+          .filter(tag => !data.compatibleTags.includes(tag));
+
+      setIncompatibleTags(incompatibleTags);
+    } catch (error) {
+      console.error('Error fetching compatible tags:', error);
+    }
+  };
 
   const handleTagChange = (event) => {
-    const tag = event.target.value;
-    const isChecked = event.target.checked;
+    const { checked, value } = event.target;
 
-    setSelectedTags((prevSelectedTags) => {
-      if (isChecked) {
-        return [...prevSelectedTags, tag];
-      } else {
-        return prevSelectedTags.filter((selectedTag) => selectedTag !== tag);
-      }
-      
-    });
+    if (checked) {
+      setSelectedTags((prevTags) => [...prevTags, value]);
+    } else {
+      setSelectedTags((prevTags) => prevTags.filter((tag) => tag !== value));
+    }
+
   };
-  
+
   useEffect(() => {
-    if(selectedTags && selectedTags.length > 0) {
+    if (selectedTags && selectedTags.length > 0) {
       updateDisplay();
+  
+      if (queryType === 'AND') {
+        fetchIncompatibleTags();
+      } else {
+        setIncompatibleTags([]);
+      }
     } else {
       fetchPhotos();
+      setIncompatibleTags([]);
     }
   }, [selectedTags, queryType]);
-
 
   const updateDisplay = async () => {
     try {
@@ -259,7 +289,7 @@ function TagSelection() {
         <div className="tag-selection-container">
           <h1>Select Tags</h1>
           <div className="tag-groups-container">
-            {Object.entries(tags).map(([key, values]) => {
+            {Object.entries(allTags).map(([key, values]) => {
               if (!Array.isArray(values)) {
                 values = [values];
               }
@@ -276,8 +306,14 @@ function TagSelection() {
                           value={`${key}:${value.trim()}`}
                           checked={selectedTags.includes(`${key}:${value.trim()}`)}
                           onChange={handleTagChange}
+                          style={{opacity: incompatibleTags.includes(`${key}:${value.trim()}`) && !selectedTags.includes(`${key}:${value.trim()}`) ? '0.5' : '1'}}
                         />
-                        <label htmlFor={`${key}:${index}`}>{value.trim()}</label>
+                        <label 
+                          htmlFor={`${key}:${index}`}
+                          style={{opacity: incompatibleTags.includes(`${key}:${value.trim()}`) && !selectedTags.includes(`${key}:${value.trim()}`) ? '0.5' : '1'}}
+                        >
+                          {value.trim()}
+                        </label>
                       </div>
                     ))}
                   </div>
