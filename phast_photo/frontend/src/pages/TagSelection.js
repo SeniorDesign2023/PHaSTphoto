@@ -283,7 +283,7 @@ function TagSelection() {
         ): null}
       </div>
       <div className="logo-container">
-        <img src="/PHaST_Logo.png" alt="Logo" className="top-logo"/>
+        <img src={aiTagsEnabled ? "/PHaST(ish)_Logo.png" : "/PHaST_Logo.png"} alt="Logo" className="top-logo"/>
       </div>
     </div>
     {loading ? (
@@ -363,8 +363,7 @@ function TagSelection() {
         </>
       ) : (
         <div className="upload-placeholder">
-          <img src="/PHaST_Logo.png" alt="Main Logo" className="upload-logo"/>
-          
+          <img src={aiTagsEnabled ? "/PHaST(ish)_Logo.png" : "/PHaST_Logo.png"} alt="Main Logo" className="upload-logo"/>
           <label htmlFor="file-input" className="upload-box" onDragOver={handleDragOver} onDragEnter={handleDragEnter} 
           onDrop={handleDrop}>
             No photos uploaded. Click the "Upload Photos" button or drag and drop photos here to get started.
