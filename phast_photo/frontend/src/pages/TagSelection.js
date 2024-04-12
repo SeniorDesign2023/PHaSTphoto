@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './TagSelection.css';
 // import { set } from 'mongoose';
 
@@ -18,7 +18,6 @@ function TagSelection() {
   const handleToggleQueryType = () => {
     setQueryType(prevQueryType => {
       const newQueryType = prevQueryType === 'AND' ? 'OR' : 'AND';
-      updateDisplay(); 
       return newQueryType;
     });
   };
@@ -54,6 +53,8 @@ function TagSelection() {
       setUploaded(true);
       fetchTags(); 
       fetchPhotos(); 
+      setSelectedTags([]);
+      setIncompatibleTags([]);
     } catch (error) {
       console.error('Upload error', error);
     }
@@ -69,7 +70,6 @@ function TagSelection() {
     const fileInput = document.getElementById('file-input');
     if (fileInput) {
       fileInput.click();
-      
     }
   };
 
@@ -123,7 +123,7 @@ function TagSelection() {
     setSelectedTags([]);
   }, []);
 
-  const fetchIncompatibleTags = async () => {
+  const fetchIncompatibleTags = useCallback(async () => {
     if (selectedTags.length === 0) {
       return;
     }
@@ -149,7 +149,7 @@ function TagSelection() {
     } catch (error) {
       console.error('Error fetching compatible tags:', error);
     }
-  };
+  }, [allTags, selectedTags]);
 
   const handleTagChange = (event) => {
     const { checked, value } = event.target;
@@ -159,25 +159,9 @@ function TagSelection() {
     } else {
       setSelectedTags((prevTags) => prevTags.filter((tag) => tag !== value));
     }
-
   };
 
-  useEffect(() => {
-    if (selectedTags && selectedTags.length > 0) {
-      updateDisplay();
-  
-      if (queryType === 'AND') {
-        fetchIncompatibleTags();
-      } else {
-        setIncompatibleTags([]);
-      }
-    } else {
-      fetchPhotos();
-      setIncompatibleTags([]);
-    }
-  }, [selectedTags, queryType]);
-
-  const updateDisplay = async () => {
+  const updateDisplay = useCallback(async () => {
     if (selectedTags.length === 0) {
       return;
     }
@@ -199,8 +183,22 @@ function TagSelection() {
     } catch (error) {
       console.error('Error updating display:', error);
     }
-  }
+  }, [queryType, selectedTags]);
 
+  useEffect(() => {
+    if (selectedTags && selectedTags.length > 0) {
+      updateDisplay();
+  
+      if (queryType === 'AND') {
+        fetchIncompatibleTags();
+      } else {
+        setIncompatibleTags([]);
+      }
+    } else {
+      fetchPhotos();
+      setIncompatibleTags([]);
+    }
+  }, [updateDisplay, fetchIncompatibleTags, selectedTags, queryType]);
 
   const handleDownload = async () => {
     if (selectedTags.length === 0) {
