@@ -1,3 +1,5 @@
+# Status Update 6
+
 ## Recap of what was planned for the last 3 weeks 
 - We had some final features to implement after our meeting with our mentor. We also needed to put together our presentation and create a video highlighting key features of our product.
 ## Tasks Completed What was done during the last 3 weeks (by whom) 
