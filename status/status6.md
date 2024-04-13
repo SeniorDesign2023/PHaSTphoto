@@ -8,13 +8,13 @@
 - Cody: Tried to implement a loading bar. Worked with Connor on final loading display Implemented live tag updates to gray out incompatible tags. Worked on the presentation. (12 hours)
 ## Successes
 1. What are your accomplishments?
-Got “OR” boolean tag combinations implemented
-Put together our full presentation
-Created and submitted our video
-Converted photos to a compressed format to be uploaded to chatgpt in order to save time and money
-Implemented code to gray out tags that are incompatible with the currently selected tags.
-Implemented loading spinner.
-Presented to class
+- Got “OR” boolean tag combinations implemented
+- Put together our full presentation
+- Created and submitted our video
+- Converted photos to a compressed format to be uploaded to chatgpt in order to save time and money
+- Implemented code to gray out tags that are incompatible with the currently selected tags.
+- Implemented loading spinner.
+- Presented to class
 2. What solutions were successful?
 - For the grayed-out tags, it ended up being easier to just set the opacity to 50% than actually changing the color to gray. This changed the opacity of the checkboxes as well, rather than having the checkbox stay the same color while the text color was changed.
 - Adding a loading spinner.
