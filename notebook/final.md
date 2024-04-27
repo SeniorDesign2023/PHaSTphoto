@@ -1,6 +1,6 @@
-#Final Project Notebook
+# Final Project Notebook
 
-#Synopsis of project goal(s)
+# Synopsis of project goal(s)
 - Our goal was to build a simple, interactive, and intuitive application for organizing large collections of photos. We wanted our app to include the basic features that are expected of other photo management apps, including importing and exporting capabilities, some kind of searching/filtering functionality, and a visually appealing user interface. Beyond these basic features, we set out to incorporate more advanced options for how a user can interact with their photos. To achieve this, we implemented AND/OR boolean searching, live filtering of tags and photos, AI-generated tags, and custom tags.
 #Link to all written status updates
 - status1.md: https://github.com/SeniorDesign2023/PHaSTphoto/blob/main/status/status1.md
@@ -9,9 +9,9 @@
 - status4.md: https://github.com/SeniorDesign2023/PHaSTphoto/blob/main/status/status4.md
 - status5.md: https://github.com/SeniorDesign2023/PHaSTphoto/blob/main/status/status5.md
 - status6.md: https://github.com/SeniorDesign2023/PHaSTphoto/blob/main/status/status6.md
-#Links to all videos created
+# Links to all videos created
 - https://youtu.be/gaPr9WcSKXw
-#Project Planning and Execution
+# Project Planning and Execution
 A. Link to Design Requirements & Specification
 - https://github.com/SeniorDesign2023/PHaSTphoto/blob/main/planning/planning.md
 B. Finalized Plan of Work (including expected vs actual)
@@ -24,7 +24,7 @@ B. Finalized Plan of Work (including expected vs actual)
 	- Major Milestones: We didn’t link external storage locations or provide persistent photo storage. However, we had other significant achievements to make up for this.
 	- Major Tasks: We did not host our website online. The major tasks we actually completed mostly involved adding more advanced filtering features to our app.
 	- Stretch goals: Our stretch goals changed from the ones listed to the following: adding a login management system, implementing persistent photos, allowing more file types, and adding cloud storage. 
-#Summary of Final Implementation:
+# Summary of Final Implementation:
 A. Design
 - Our final product is built around two main pages, the home/upload page and the tag selection page. The home page greets users with the product name/logo and a prompt to upload their photos. The banner across the top of the page also reveals some of the capabilities of the product by giving the users labeled buttons for uploading photos, clearing photos, enabling AI tagging, and switching between AND/OR tagging. After the user uploads their photos and possibly selects additional tagging options, they can view their photos on the tag selection page. Here, they can then select a combination of tags, view the search results, and download their selection of photos. 
 B. Limitations
@@ -41,7 +41,7 @@ D. Statement of Work
 - Buck: Worked on getting the initial project up and running, worked on the boolean switcher, and AI tagging.
 - Cody: Worked on live tag updates, frontend design refactoring, photo display, photo enlargement on click, squashed bugs, assisted Matty with live photo updates, and helped fill out initial  information on slideshow.
 - Connor: Set up database, initial structuring of UI/style, button UI, clear photo functionality, naming download folder, loading display, assisting Buck with tag handling, filling out and cleaning up slideshow info.
-#Reflection on the team's ability to design, implement, and evaluate a solution.
+# Reflection on the team's ability to design, implement, and evaluate a solution.
 A. Lessons Learned
 - We learned the importance of getting started as early as possible and keeping a consistent work schedule. Our project involved a lot of trial and error, so having enough time to try different approaches and revise code was very important.
 - We learned to communicate and coordinate our work with each other better. We struggled with this initially, and it cost us time and stress. After our communication improved, we became more efficient as a group and were able to make higher quality work.
