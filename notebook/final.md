@@ -50,9 +50,11 @@ A. Lessons Learned
 - We learned the importance of getting started as early as possible and keeping a consistent work schedule. Our project involved a lot of trial and error, so having enough time to try different approaches and revise code was very important.
 - We learned to communicate and coordinate our work with each other better. We struggled with this initially, and it cost us time and stress. After our communication improved, we became more efficient as a group and were able to make higher quality work.
 - We learned how to create an appealing User Interface to make our product more usable and intuitive to use. Just by changing the design, our product started to feel much more valuable.
+
 B. "If you had to do it all over again"
 - If we had to do it all over again the one thing that would be changed is to communicate better. We had a couple of instances where two team members were working on similar things and one finished first rendering the other member's time useless. This was frustrating for the member that got their code overwritten. 
 - Another thing we would change would be to try to work together more on our tasks. The few times that this did happen, the work took less time and we were less error prone.
+
 C. Advice for future teams
 - Find at least one time each week to meet as a team to work on the project.
 - Become good friends with your team members: this makes it easy to work with them, and also makes it easier to hold them accountable for work that they need to do. 
