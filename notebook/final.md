@@ -28,6 +28,7 @@ B. Finalized Plan of Work (including expected vs actual)
 # Summary of Final Implementation:
 A. Design
 - Our final product is built around two main pages, the home/upload page and the tag selection page. The home page greets users with the product name/logo and a prompt to upload their photos. The banner across the top of the page also reveals some of the capabilities of the product by giving the users labeled buttons for uploading photos, clearing photos, enabling AI tagging, and switching between AND/OR tagging. After the user uploads their photos and possibly selects additional tagging options, they can view their photos on the tag selection page. Here, they can then select a combination of tags, view the search results, and download their selection of photos. 
+
 B. Limitations
 - Some of the functions we wrote are somewhat rigid. For example, the geospatial information only accounts for a couple of predefined locations, and the seasons only work for the northern hemisphere. 
 - The user has to re-upload their photos every time they reload the page, i.e. there is no persistent photo storage.
