@@ -2,7 +2,7 @@
 
 # Synopsis of project goal(s)
 - Our goal was to build a simple, interactive, and intuitive application for organizing large collections of photos. We wanted our app to include the basic features that are expected of other photo management apps, including importing and exporting capabilities, some kind of searching/filtering functionality, and a visually appealing user interface. Beyond these basic features, we set out to incorporate more advanced options for how a user can interact with their photos. To achieve this, we implemented AND/OR boolean searching, live filtering of tags and photos, AI-generated tags, and custom tags.
-#Link to all written status updates
+# Link to all written status updates
 - status1.md: https://github.com/SeniorDesign2023/PHaSTphoto/blob/main/status/status1.md
 - status2.md: https://github.com/SeniorDesign2023/PHaSTphoto/blob/main/status/status2.md
 - status3.md: https://github.com/SeniorDesign2023/PHaSTphoto/blob/main/status/status3.md
