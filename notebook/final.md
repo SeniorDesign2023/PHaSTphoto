@@ -33,8 +33,10 @@ B. Limitations
 - Some of the functions we wrote are somewhat rigid. For example, the geospatial information only accounts for a couple of predefined locations, and the seasons only work for the northern hemisphere. 
 - The user has to re-upload their photos every time they reload the page, i.e. there is no persistent photo storage.
 - Uploading too many photos causes significant loading times and can exceed the maximum allowable ChatGPT API call length.
+
 C. Future Direction
 - In the future we need to implement a login management system. This will go hand in hand with persistent photo storage allowing users to log in and see the photos that they have previously uploaded. We would also like to add the ability to process more file types, implement cloud storage, and implement manual photo tagging. We would also need to create a premium version of the application that users can subscribe to in order to pay for ChatGPT API calls.
+
 D. Statement of Work
 1. Whole team
 - We worked on all the documents together, passed around a lot of code work, bounced ideas off of each other, and  worked on the slideshow together. Often, we laid the groundwork for each other so that another member could take over and improve on what was suggested/started.
