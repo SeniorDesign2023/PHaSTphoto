@@ -14,6 +14,7 @@
 # Project Planning and Execution
 A Link to Design Requirements & Specification
 - https://github.com/SeniorDesign2023/PHaSTphoto/blob/main/planning/planning.md
+- 
 B Finalized Plan of Work (including expected vs actual)
 - https://github.com/SeniorDesign2023/PHaSTphoto/blob/main/planning/final.md
 - NOTE: This document contains the expected finalized plan of work. The following notes explain the changes from this document to how our project actually turned out:
